@@ -1,0 +1,3 @@
+IF-NXPG-001###https://xpg-nxpg-stg.skb-doj-dev01.mybluemix.net/v5/menu/all?IF=IF-NXPG-002&stb_id=%7B660D7F55-89D8-11E5-ADAE-E5AC4F814417%7D&menu_stb_svc_id=BTVWEBV512
+
+//사용하지않음
