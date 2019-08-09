@@ -1,0 +1,49 @@
+<div class="row" style="margin-left:20px; margin-top:20px">
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$("#uploadbutton").click(function() {
+				var form = new FormData();
+				form.append("file", $("#file")[0].files[0]);
+				$.ajax({
+					type : "post",//필수 
+					url : "/nxpgtool/uploadFile",
+					async : false,
+					enctype : "multipart/form-data",//필수 
+					contentType : false,//필수 
+					processData : false,//필수 
+					//dataType : "json",//필수 
+					data : form,//data：{"form":form}로하면 안됨!!!        
+					success : function(data) {
+						if (data == "ok") {
+							alert("업로드됨");
+						}
+						$("#file").val("");
+						var file = $("#file");
+						file.after(file.clone());
+						file.remove();
+					},
+					error : function(e) {
+						alert("실패했음");
+					}
+				});
+			});
+		});
+	</script>
+	<div class="col-md-12">
+		<span class="tips">Template 파일 Download</span> <a class="btn"
+			href="/nxpgtool/resource/download">다운로드</a>
+	</div>
+	<div class="col-md-5">
+		<form role="form" id="fileuploadForm" method="POST" enctype="multipart/form-data">
+			<h2>Excel 등록</h2>
+			<div class="form-group">
+				<input id="file" type="file" name="file" />
+			</div>
+			<div class="form-group">
+				<input type="button" value="Upload" id="uploadbutton"></input>
+			</div>
+			
+		</form>
+	</div>
+
+</div>

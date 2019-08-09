@@ -46,7 +46,7 @@ public class ExcelController {
 	public String hello(Model model, @RequestParam(defaultValue = "Ryan") String name) throws FileNotFoundException {
 
 		model.addAttribute("name", name);
-		return "excel";
+		return "tiles/thymeleaf/excel";
 	}
 	
 	@ResponseBody

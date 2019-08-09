@@ -32,7 +32,7 @@ public class IFController {
 	@RequestMapping("/if")
 	public String hello(Model model, @RequestParam(defaultValue = "Ryan") String name) throws FileNotFoundException {
 		model.addAttribute("name", name);
-		return "if2";
+		return "tiles/thymeleaf/if";
 	}
 	
 	@ResponseBody
@@ -44,13 +44,6 @@ public class IFController {
 			ifTree = ifService.toTree(url);
 		} catch (DataNotValidException e) {
 			return ResponseCommon.IFResponse("해당 데이터가 없음..Interface 호출하여 데이터 확인하세요.");
-		}
-		//logger.info(JsonUtil.objectToJson(ifTree));
-		try {
-			CommonUtils.saveJson("/tmp/aaa.json", JsonUtil.objectToJson(ifTree));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		Map<String, Object> apiTree = ifService.getFieldTree(ifname);
 		logger.info(JsonUtil.objectToJson(apiTree));

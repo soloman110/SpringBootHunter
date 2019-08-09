@@ -33,7 +33,7 @@ public class HelloController {
 	@RequestMapping("/index")
 	public String hello(Model model, @RequestParam(defaultValue = "Ryan") String name) {
 		model.addAttribute("name", name);
-		return "index";
+		return "tiles/thymeleaf/excel";
 	}
 
 	@ResponseBody
@@ -52,26 +52,14 @@ public class HelloController {
 		return map;
 	}
 
-	@RequestMapping("/user")
-	public String user(@Valid @ModelAttribute("user") User user, Errors errors, Model model, String xss,
-			@RequestParam(defaultValue = "true") boolean injection) {
-		if (injection) {
-			xss = StringEscapeUtils.escapeHtml4(xss);
-		}
-		model.addAttribute("xss", xss);
-		if (errors.hasErrors()) {
-			model.addAttribute("error", errors.getAllErrors());
-		} else {
-//            model.addAttribute("user",user);
-		}
-
-		return "user";
+	@RequestMapping("/jsp-layout")
+	public String jspViewTest() {
+		return "tiles/jsp/j3";
 	}
 
-	@RequestMapping("/test")
-	@ResponseBody
-	public String test() {
-		int result1 = Field.buildId(1, "cacbro_cd");
-		return String.valueOf(result1);
+	@RequestMapping("/demo")
+	public String thymeleaf() {
+		return "tiles/thymeleaf/demo";
 	}
+
 }
