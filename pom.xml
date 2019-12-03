@@ -87,11 +87,13 @@
 			<artifactId>fastjson</artifactId>
 			<version>1.2.7</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.16.18</version>
+			<scope>provided</scope>
 		</dependency>
+
 		<!-- spring.thymeleaf.mode=LEGACYHTML5 -->
 		<dependency>
 			<groupId>nekohtml</groupId>
@@ -135,7 +137,12 @@
 		</dependency>
 
 	</dependencies>
-
+	<repositories>
+		<repository>
+			<id>projectlombok.org</id>
+			<url>http://projectlombok.org/mavenrepo</url>
+		</repository>
+	</repositories>
 	<build>
 		<plugins>
 			<plugin>
