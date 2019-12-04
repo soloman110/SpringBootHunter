@@ -1,6 +1,8 @@
 package com.zinnaworks.nxpgtool.config;
 
 
+import javax.servlet.Filter;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
@@ -10,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.zinnaworks.nxpgtool.Application;
 import com.zinnaworks.nxpgtool.common.FileStorageProperties;
@@ -37,6 +40,14 @@ public class ApplicationContextConfig {
             container.addErrorPages(error401Page, error404Page, error500Page);
         });
     }
+    
+//    @Bean
+//    public Filter characterEncodingFilter() {
+//        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+//        characterEncodingFilter.setEncoding("UTF-8");
+//        characterEncodingFilter.setForceEncoding(true);
+//        return characterEncodingFilter;
+//    }
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(ApplicationContextConfig.class, args);
