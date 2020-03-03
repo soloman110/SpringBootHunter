@@ -1,7 +1,6 @@
 package com.zinnaworks.nxpgtool.util;
 
 import java.lang.reflect.Type;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +10,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.boot.json.JacksonJsonParser;
-import org.springframework.stereotype.Component;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;

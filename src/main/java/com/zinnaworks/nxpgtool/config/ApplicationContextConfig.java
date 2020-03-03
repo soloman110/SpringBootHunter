@@ -1,8 +1,6 @@
 package com.zinnaworks.nxpgtool.config;
 
 
-import javax.servlet.Filter;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
@@ -10,9 +8,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.ErrorPage;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.zinnaworks.nxpgtool.Application;
 import com.zinnaworks.nxpgtool.common.FileStorageProperties;
@@ -21,6 +20,8 @@ import com.zinnaworks.nxpgtool.common.FileStorageProperties;
 	FileStorageProperties.class
 })
 @Controller
+@EnableAsync        // 启用异步任务
+@EnableScheduling   // 启用定时任务
 @SpringBootApplication(scanBasePackageClasses = Application.class)
 public class ApplicationContextConfig {
 

@@ -51,4 +51,10 @@ public class IFController {
 		String diff = ifService.compare(ifTree, apiTree);
 		return ResponseCommon.IFResponse(diff);
 	}
+	
+	@RequestMapping("/jiraissue")
+	public String jiraIssue(Model model, @RequestParam(defaultValue = "Ryan") String name) throws FileNotFoundException {
+		model.addAttribute("name", name);
+		return "tiles/thymeleaf/jiraIssue";
+	}
 }

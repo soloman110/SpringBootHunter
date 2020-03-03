@@ -1,5 +1,5 @@
 /*
- * The MIT License (MIT)
+d * The MIT License (MIT)
  *
  * Copyright (c) 2014-2016 abel533@gmail.com
  *
@@ -24,9 +24,6 @@
 
 package com.zinnaworks.nxpgtool.config;
 
-import com.zinnaworks.nxpgtool.Application;
-import com.zinnaworks.nxpgtool.interceptor.LoginInterceptor;
-
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -35,9 +32,14 @@ import javax.servlet.Filter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
+import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
+import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -45,6 +47,9 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+
+import com.zinnaworks.nxpgtool.Application;
+import com.zinnaworks.nxpgtool.interceptor.LoginInterceptor;
 
 @Configuration
 @ComponentScan(basePackageClasses = Application.class, useDefaultFilters = true)
@@ -98,11 +103,26 @@ public class ServletContextConfig extends WebMvcConfigurationSupport {
 	}
 
 	@Override
-	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-		super.configureMessageConverters(converters);
+	public void configureMessageConverters(List<HttpMessageConverter<?>> messageConverters) {
+		// super.configureMessageConverters(converters);
 		//
-		converters.add(responseBodyConverter());
-		converters.add(new MappingJackson2HttpMessageConverter());
+		// converters.add(responseBodyConverter());
+		// converters.add(new MappingJackson2HttpMessageConverter());
+
+		final MappingJackson2HttpMessageConverter jsonMessageConverter = new MappingJackson2HttpMessageConverter();
+
+		final StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter(
+				Charset.forName("UTF-8"));
+		stringHttpMessageConverter.setWriteAcceptCharset(false);
+
+		//messageConverters.add(new CSVMessageConverter());
+		messageConverters.add(new ByteArrayHttpMessageConverter());
+		messageConverters.add(stringHttpMessageConverter);
+		messageConverters.add(new ResourceHttpMessageConverter());
+		messageConverters.add(new SourceHttpMessageConverter<>());
+		messageConverters.add(new AllEncompassingFormHttpMessageConverter());
+		messageConverters.add(jsonMessageConverter);
+		messageConverters.add(new Jaxb2RootElementHttpMessageConverter());
 	}
 
 	@Override

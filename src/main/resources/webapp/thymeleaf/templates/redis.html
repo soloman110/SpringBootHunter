@@ -430,6 +430,8 @@ pre {
 		}
 		//var root = "http://localhost:8082/task/hget/grid_banner/BTVWEBV513_NM1000023792";
 		var url = "https://xpg-nxpg-stg.skb-doj-dev01.mybluemix.net/task/hget/" + build_url(this, field);
+		//var url = "http://localhost:8082/task/hget/" + build_url(this, field);
+		alert(url);
 		//return;
 		$.ajax({
 			type : "get",//필수 
@@ -474,6 +476,8 @@ pre {
 
 	$("#btn_submit").click(function() {
 		var jsonstr = $("#redis_data_div").html();
+		//var url = "https://xpg-nxpg-stg.skb-doj-dev01.mybluemix.net/ge/task/hset/" +uri;
+		//var url = "http://localhost:8082/task/hget/" + uri;
 		var url = "https://xpg-nxpg-stg.skb-doj-dev01.mybluemix.net/ge/task/hset/" +uri;
 		//https://xpg-nxpg-stg.skb-doj-dev01.mybluemix.net/ge/task/hset/big_banner/BTVWEBV512_SKMNM10000004001
 		//var url = "https://xpg-nxpg-stg.skb-doj-dev01.mybluemix.net/task/hget/" + build_url(this, field);
