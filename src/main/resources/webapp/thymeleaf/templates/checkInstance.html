@@ -1,0 +1,65 @@
+<style>
+	table {margin:10px;}
+	table th, table td {text-align:inherit;}
+	th,td {padding:3px; text-align:inherit}
+</style>
+
+<div class="row" style="margin-left:20px; margin-top:20px">
+	<script type="text/javascript">
+		$(document).ready(function() {
+			alert(1);
+		});
+	</script>
+		<form role="form" id="frmInstance" name="frmInstance" method="POST" target="_blank" action="/maintain/checkInstance">
+			<table>
+				<tr>
+					<td colspan="2">
+						NXPG Instance Check
+					</td>
+				</tr>
+				
+				<tr>
+					<td>Type</td>
+					<td>
+						<select name="type">
+							<option value="dev">dev</option>
+							<option value="stg">stg</option>
+							<option value="prd">prd</option>
+						</select>
+						<select name="urlType">
+							<option value="all">all</option>
+							<option value="suy">suy</option>
+							<option value="ssu">ssu</option>
+						</select>
+						<input type="button" value="비교" style="width:70" onclick="document.frmInstance.submit();"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Instance Count
+					</td>
+					<td>
+						<input type="text" name="instCount" value="1"/>
+					</td>
+				</tr>	
+				<tr>
+					<td>
+						Check Result
+					</td>
+					<td>
+						<textarea name="txtResult" cols="30" rows="5">result:0000</textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Sub Url
+					</td>
+					<td>
+						<input type="text" name="txtSubUrl" value="v5/menu/gnb?IF=IF-NXPG-001&amp;stb_id=%7B660D7F55-89D8-11E5-ADAE-E5AC4F814417%7D&amp;menu_stb_svc_id=BTVUH2V500"/>
+					</td>
+				</tr>
+				
+			</table>
+			
+		</form>
+	</div>
