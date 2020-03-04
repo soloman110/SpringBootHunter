@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zinnaworks.nxpgtool.util.HttpUtils;
@@ -18,9 +19,7 @@ import com.zinnaworks.nxpgtool.util.StringUtils;
 
 @Controller
 @RequestMapping("/maintain")
-public class Maintain {	
-	
-	// 서버 주소 url
+public class Maintain {
 	// sample
 	String sampleUrl = "v5/menu/gnb?IF=IF-NXPG-001&stb_id=%7B660D7F55-89D8-11E5-ADAE-E5AC4F814417%7D&menu_stb_svc_id=BTVUH2V500";	
 	// dev
@@ -42,8 +41,9 @@ public class Maintain {
 		return "tiles/thymeleaf/checkInstance";
 	}
 	
-	@RequestMapping(value = "/checkInstance", method = RequestMethod.POST)
-	public ModelAndView checkInstance(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/checkInstance")
+	@ResponseBody
+	public String checkInstance(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mv = new ModelAndView("viewApiCompare");
 		String resultValue = "";
 		String suyUrl = "", ssuUrl = "";
@@ -57,8 +57,7 @@ public class Maintain {
 		String ssuAppId = "";
 		
 		if (urlType == null || instCount == 0) {
-			mv.addObject("value", "필수값 없음");
-			return mv;
+			return "필수값 없음";
 		}
 		
 		if ("".equals(subUrl) || subUrl == null) {
@@ -83,16 +82,14 @@ public class Maintain {
 		if (!"ssu".equals(urlType)) {
 			suyAppId = HttpUtils.getAppId(suyUrl);
 			if (suyAppId == null) {
-				mv.addObject("value", "Application Id 못불러옴");
-				return mv;
+				return "Application Id 못불러옴";
 			}
 		}
 		// ssu(prd에서만 사용)
 		if (!"suy".equals(urlType) && "prd".equals(serverType)) {
 			ssuAppId = HttpUtils.getAppId(ssuUrl);
 			if (ssuAppId == null) {
-				mv.addObject("value", "Application Id 못불러옴");
-				return mv;
+				return "Application Id 못불러옴";
 			}
 		}
 		
@@ -103,38 +100,32 @@ public class Maintain {
 					String strTemp = HttpUtils.getData(suyUrl, suyAppId, i);
 					if (strTemp != null) {
 						JSONObject jobj = new JSONObject(strTemp);
-//						if (StringUtils.StringEqueals("0000", jobj.getString("result"))) 
 						if (StringUtils.CheckResult(strTemp, result, jobj.getString("result")))
-							resultValue = resultValue + "<font color='blue'>suy inst : " + i + " Success</font>";
+							resultValue = resultValue + "suy inst : " + i + " Success";
 						else 
-							resultValue = resultValue + "<font color='red'>suy inst : " + i + " Error " + jobj.getString("result") +"</font>";
+							resultValue = resultValue + "suy inst : " + i + " Error " + jobj.getString("result");
 					} else {
-						resultValue = resultValue + "<font color='red'>suy inst : " + i + " Error</font>";
+						resultValue = resultValue + "suy inst : " + i + " Error";
 					}
-					resultValue += "</br>";
 				}
 				// ssu(prd에서만 사용)
 				if (!"suy".equals(urlType) && "prd".equals(serverType)) {
 					String strTemp = HttpUtils.getData(ssuUrl, ssuAppId, i);
 					if (strTemp != null) {
 						JSONObject jobj = new JSONObject(strTemp);
-//						if (StringUtils.StringEqueals("0000", jobj.getString("result"))) 
-						if (StringUtils.CheckResult(strTemp, result, jobj.getString("result")))
-							resultValue = resultValue + "<font color='blue'>ssu inst : " + i + " Success</font>";
+						boolean isSuccess = StringUtils.CheckResult(strTemp, result, jobj.getString("result"));
+						if (isSuccess)
+							resultValue = resultValue + "ssu inst : " + i + " Success";
 						else 
-							resultValue = resultValue + "<font color='red'>ssu inst : " + i + " Error " + jobj.getString("result") +"</font>";
+							resultValue = resultValue + "ssu inst : " + i + " Error " + jobj.getString("result");
 					} else {
-						resultValue = resultValue + "<font color='red'>ssu inst : " + i + " Error</font>";
+						resultValue = resultValue + "ssu inst : " + i + " Error";
 					}
-					resultValue += "</br>";
 				}
 			} catch (Exception e) {
 				System.out.println("inst : " + i + "error : " + e.toString());
 			}
 		}
-		
-		mv.addObject("value", resultValue);
-		return mv;
+		return resultValue;
 	}
-	
 }

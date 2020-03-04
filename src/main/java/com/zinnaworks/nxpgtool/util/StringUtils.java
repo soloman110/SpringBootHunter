@@ -29,8 +29,8 @@ public class StringUtils {
 		if (value2 == null || "".equals(value2)) {
 			return "0000".equals(result);
 		}
-		
-		return value.indexOf(value2) != -1;
+		String replacement = value.replace("\"", "");
+		return replacement.indexOf(value2) != -1;
 	}
 	
 	public static boolean StringEqueals(String value, String value2) {

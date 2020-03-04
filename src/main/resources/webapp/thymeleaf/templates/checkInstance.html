@@ -7,7 +7,18 @@
 <div class="row" style="margin-left:20px; margin-top:20px">
 	<script type="text/javascript">
 		$(document).ready(function() {
-			alert(1);
+			$("#compareBtn").click(
+				function() {
+					$.ajax({
+		                method:"post",
+		            　　		data:$('#frmInstance').serialize(),
+		              	url:"/maintain/checkInstance",
+		                success:function(data){
+		                	alert(data);
+		                }
+		            });
+				}		
+			);			
 		});
 	</script>
 		<form role="form" id="frmInstance" name="frmInstance" method="POST" target="_blank" action="/maintain/checkInstance">
@@ -31,7 +42,7 @@
 							<option value="suy">suy</option>
 							<option value="ssu">ssu</option>
 						</select>
-						<input type="button" value="비교" style="width:70" onclick="document.frmInstance.submit();"/>
+						<input id="compareBtn" type="button" value="비교" style="width:70"/>
 					</td>
 				</tr>
 				<tr>
