@@ -1,6 +1,12 @@
 package com.zinnaworks.nxpgtool.controller;
 
 import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -8,12 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zinnaworks.nxpgtool.util.ExecuteShellUtil;
 import com.zinnaworks.nxpgtool.util.HttpUtils;
 import com.zinnaworks.nxpgtool.util.StringUtils;
 
@@ -46,6 +54,53 @@ public class Maintain {
 		return "tiles/thymeleaf/urlTransform";
 	}
 	
+	@RequestMapping("/gecheck")
+	public String gecheck(Model model, @RequestParam(defaultValue = "Ryan") String name) throws FileNotFoundException {
+		model.addAttribute("name", name);
+		return "tiles/thymeleaf/geCheck";
+	}
+	
+	@RequestMapping("/fullCheck")
+	@ResponseBody
+	public List<String> fullCheck(@RequestBody(required=true) Map<String,Object> map) throws FileNotFoundException {
+		ExecuteShellUtil executor = ExecuteShellUtil.getInstance();
+		List<String> result = null;
+		
+		String type = (String)map.get("type");
+		String date = (String)map.get("date");
+		
+		String host = "stg".equals(type) ? "10.10.223.30" : "10.10.213.9";
+		String user = "root";
+		String password = "stg".equals(type) ? "I@mg2pw!!stg" : "I@mg2pw!!dev";
+		
+		System.out.println("DDDDDDDDFFF" + buildCmd(date));
+		
+		try {
+			executor.init(host, 22, user, password);
+			//catalina.2020-02-29.0.log
+			result = executor.remoteExecute(buildCmd(date));
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			executor.close();
+		}
+		return result;
+	}
+	
+	private String buildCmd(String date) {
+		if(date == null || "".equals(date)) {
+			return "cat /home/xpg/logs/catalina.log | grep \"END_FILE_FULL\"";
+		}
+		return "cat /home/xpg/logs/catalina." + date + "* | grep \"END_FILE_FULL\"";
+	}
+	
+	public String getToday() {
+		Locale currLocale = new Locale("KOREAN","KOREA");  
+		String pattern = "yyyy-MM-dd";
+		SimpleDateFormat formatter = new SimpleDateFormat(pattern, currLocale);
+		return formatter.format(new Date());
+	}
+		
 	@RequestMapping(value = "/checkInstance")
 	@ResponseBody
 	public String checkInstance(HttpServletRequest request, HttpServletResponse response) {
