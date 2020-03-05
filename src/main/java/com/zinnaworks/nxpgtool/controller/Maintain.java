@@ -40,11 +40,15 @@ public class Maintain {
 		model.addAttribute("name", name);
 		return "tiles/thymeleaf/checkInstance";
 	}
+	@RequestMapping("/urltrans")
+	public String urlTrans(Model model, @RequestParam(defaultValue = "Ryan") String name) throws FileNotFoundException {
+		model.addAttribute("name", name);
+		return "tiles/thymeleaf/urlTransform";
+	}
 	
 	@RequestMapping(value = "/checkInstance")
 	@ResponseBody
 	public String checkInstance(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mv = new ModelAndView("viewApiCompare");
 		String resultValue = "";
 		String suyUrl = "", ssuUrl = "";
 		int instCount = StringUtils.StringToInt(request.getParameter("instCount")); //Instance Count
@@ -126,6 +130,73 @@ public class Maintain {
 				System.out.println("inst : " + i + "error : " + e.toString());
 			}
 		}
+		return resultValue;
+	}
+	
+	@RequestMapping(value = "/checkApi", method = RequestMethod.POST)
+	@ResponseBody
+	public String checkApi(HttpServletRequest request, HttpServletResponse response) {
+		String resultValue = "";
+		String suyUrl = "", ssuUrl = "";
+
+		String url = request.getParameter("url");
+		String urlType = request.getParameter("urlType");
+		String serverType = request.getParameter("type");
+
+		// 서버 확인 후 url 정보 넣기
+		if ("dev".equals(serverType)) {
+			suyUrl = devUrl;
+			ssuUrl = devUrl;
+		} else if ("stg".equals(serverType)) {
+			suyUrl = stgUrl;
+			ssuUrl = stgUrl;
+		} else {
+			suyUrl = prdSuyUrl;
+			ssuUrl = prdSsuUrl;
+		}
+		// url 필터링
+		String[] urlList = url.split("\n");
+		
+		for(int i = 0; i < urlList.length; i++) {
+			try {
+				url = StringUtils.getUrlPath(urlList[i]);
+				if (url == null) continue;
+				// suy
+				if (!"ssu".equals(urlType)) {
+					String strTemp = HttpUtils.getData(suyUrl + url);
+					
+					if (strTemp != null) {
+						JSONObject jobj = new JSONObject(strTemp);
+						if (StringUtils.StringEqueals("0000", jobj.getString("result"))) 
+							resultValue = resultValue + "suy " + suyUrl + url + "</br>";
+						else 
+							resultValue = resultValue + "suy " + suyUrl + url + " Error " + jobj.getString("result") +"</br>";
+					} else {
+						resultValue = resultValue + "suy " + suyUrl + url + "</br>";
+					}
+				}
+
+				// ssu(prd에서만 사용)
+				if (!"suy".equals(urlType) && "prd".equals(serverType)) {
+					String strTemp = HttpUtils.getData(ssuUrl + url);
+					
+					if (strTemp != null) {
+						JSONObject jobj = new JSONObject(strTemp);
+						if (StringUtils.StringEqueals("0000", jobj.getString("result"))) 
+							resultValue = resultValue + "ssu " + ssuUrl + url + "</br>";
+						else 
+							resultValue = resultValue + "ssu " + ssuUrl + url + " Error " + jobj.getString("result") + "</br>";
+					} else {
+						resultValue = resultValue + "ssu " + ssuUrl + url + "</br>";
+					}
+				}
+				
+			} catch (Exception e) {
+				System.out.println("inst : " + url + "error : " + e.toString());
+				resultValue = resultValue + url;
+			}
+		}
+		
 		return resultValue;
 	}
 }
