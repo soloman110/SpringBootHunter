@@ -74,7 +74,6 @@ public class Maintain {
 		String password = "stg".equals(type) ? "I@mg2pw!!stg" : "I@mg2pw!!dev";
 		
 		System.out.println("CMD: " + buildCmd(date));
-		
 		try {
 			executor.init(host, 22, user, password);
 			result = executor.remoteExecute(buildCmd(date));

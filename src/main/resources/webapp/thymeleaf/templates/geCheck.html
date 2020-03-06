@@ -11,7 +11,7 @@ select {width:80px; height:30px}
 		$(document).ready(function() {
 			$("#fullBtn").click(
 				function() {
-					var data = {type:"dev", date:$("#date").val()};
+					var data = {type: $("#serverSelector").val(), date:$("#date").val()};
 					$.ajax({
 		                method:"post",
 		            　　		data: JSON.stringify(data),
@@ -61,7 +61,7 @@ select {width:80px; height:30px}
         <div class="form-group">
         		<label for="dtp_input2" class="col-sm-1 control-label">서버 선택</label>
         		<div class="col-sm-offset-1">
-					<select name="type">
+					<select name="type" id="serverSelector">
 						<option value="dev">dev</option>
 						<option value="stg">stg</option>
 					</select>
