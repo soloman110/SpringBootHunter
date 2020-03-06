@@ -73,11 +73,10 @@ public class Maintain {
 		String user = "root";
 		String password = "stg".equals(type) ? "I@mg2pw!!stg" : "I@mg2pw!!dev";
 		
-		System.out.println("DDDDDDDDFFF" + buildCmd(date));
+		System.out.println("CMD: " + buildCmd(date));
 		
 		try {
 			executor.init(host, 22, user, password);
-			//catalina.2020-02-29.0.log
 			result = executor.remoteExecute(buildCmd(date));
 		} catch (Exception e) {
 			e.printStackTrace();
