@@ -93,7 +93,12 @@ public class ExcelParser {
 					int id = depth + fieldName.hashCode();
 					
 					Field.Type type = null;
-					type = getType(row.getCell(tRange.getStartCloumnNum()).getStringCellValue());
+					try {
+						type = getType(row.getCell(tRange.getStartCloumnNum()).getStringCellValue());
+					} catch(Exception e) {
+						throw new RuntimeException("sheet name: " + sheet.getSheetName() + "Row: " + i);
+					}
+					
 					// get Field Instance by Type(Leaf, Compsite)
 					currentField = fieldFactory(type);
 					currentField.setDepth(depth).setName(fieldName).setId(id)

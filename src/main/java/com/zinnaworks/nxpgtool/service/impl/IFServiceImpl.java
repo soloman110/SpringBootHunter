@@ -51,7 +51,7 @@ public class IFServiceImpl implements IFService {
 			String fieldName = entry.getKey();
 			Object v = entry.getValue();
 			if(!apiExcel.containsKey(fieldName)) {
-				return entry.getValue().toString() + " 이 존재하지 않음!" + apiExcel.get(fieldName);
+				return "[필드]" + fieldName + " 존재하지 않음!" + "[Detail]" + entry.getValue().toString()  + apiExcel.get(fieldName);
 			}
 			if(v instanceof Map) {
 				return compare((Map<String, Object>)v, (Map<String, Object>)apiExcel.get(fieldName));
