@@ -1,61 +1,51 @@
-<style>
-	table {margin:10px;}
-	table th, table td {text-align:inherit;}
-	th,td {padding:3px; text-align:inherit}
-</style>
-
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#btn").click(
+			function() {
+				$.ajax({
+	                method:"post",
+	            　　		data:$('#frmApi').serialize(),
+	              	url:"/maintain/checkApi",
+	                success:function(data){
+	                	$("#result").html(data);
+	                }
+	            });
+			}		
+		);			
+	});
+</script>
 <div class="row" style="margin-left:20px; margin-top:20px">
-	<script type="text/javascript">
-		$(document).ready(function() {
-			$("#btn").click(
-				function() {
-					$.ajax({
-		                method:"post",
-		            　　		data:$('#frmApi').serialize(),
-		              	url:"/maintain/checkApi",
-		                success:function(data){
-		                	$("#result").html(data);
-		                }
-		            });
-				}		
-			);			
-		});
-	</script>
-	<div>
-	<form name="frmApi" id="frmApi" action="/maintain/checkApi" method="post">
-		<table>
-			<tr>
-				<td>Type</td>
-				<td>
+	<form id="frmApi" class="form-horizontal" role="form" name="frmApi" action="/maintain/checkApi" method="post">
+        <div class="form-group">
+        		<label for="dtp_input2" class="col-md-1 control-label">Type</label>
+        		<div class="col-md-offset-1">
 					<select name="type">
-						<option value="dev">dev</option>
-						<option value="stg">stg</option>
-						<option value="prd">prd</option>
-					</select>
-					<select name="urlType">
-						<option value="all">all</option>
-						<option value="suy">suy</option>
-						<option value="ssu">ssu</option>
-					</select>
-					<input type="button" id="btn" value="비교" style="width:7"/>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2">
-					<textarea name="url" cols="100" rows="15">
-					ALL TEST
+							<option value="dev">dev</option>
+							<option value="stg">stg</option>
+							<option value="prd">prd</option>
+						</select>
+						<select name="urlType">
+							<option value="all">all</option>
+							<option value="suy">suy</option>
+							<option value="ssu">ssu</option>
+						</select>
+						<input type="button" id="btn" value="비교" class="btn btn-default"/>
+				</div>
+		</div>
+		<div class="form-group">
+			<label for="dtp_input2" class="col-md-1 control-label">원시 로그</label>
+			<div class="col-md-offset-1">
+				<textarea name="url" class="col-md-8" rows="15">
+				ALL TEST
 
 July 18th 2019, 01:07:36.688	http://agw.sk-iptv.com:8080/xpg/v5/menu/gnb?menu_stb_svc_id=BTVATVV501&amp;IF=IF-NXPG-001&amp;stb_id=%7BC427C297-8764-11E9-8A0F-6B0B99858FC5%7D&amp;version=0
 July 18th 2019, 01:07:35.820	http://agw.sk-iptv.com:8080/xpg/v5/menu/gnb?response_format=json&amp;IF=IF-NXPG-001&amp;menu_stb_svc_id=BTVHDRV502&amp;stb_id=%7B38D6DE44-422B-11E4-B407-05693235AB37%7D
-</textarea>
-				</td>
-			</tr>
-			<tr>
-			<td colspan="2">
-				<div id="result"></div>
-			</td>
-			</tr>
-		</table>
+								
+				</textarea>
+			</div>
+		</div>
+		<div class="form-group">
+			<div id="result" class="col-md-offset-1 col-md-8"></div>
+		</div>
 	</form>	
-	</div>
 </div>
