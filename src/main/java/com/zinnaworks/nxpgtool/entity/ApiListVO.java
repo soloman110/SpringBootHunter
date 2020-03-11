@@ -17,22 +17,22 @@ public class ApiListVO {
 	// url에 get param중 원하는 값을 가지고 온다.
 	public String FindValue(String url, String name) {
 		String result = "";
-		if (url == null) return result;
-		if (name == null) return result;
+		if (url == null) 
+			return result;
+		if (name == null) 
+			return result;
 		
 		// 원하는 문자를 찾는다.
 		int index = url.indexOf(name);
-		if (index < 0) return result;
-		
+		if (index < 0) 
+			return result;
 		// 그 이전 글자는 자르고 가지고 온다.
 		// +1을 하는 이유는 = 을 빼기 위해서.
-		result = url.substring(index + 1 + name.length(), url.length());	
-		
+		result = url.substring(index + 1 + name.length(), url.length());
 		// 나머지 부분을 자른다
 		index = result.indexOf("&");
 		if (index >= 0) 
 			result = result.substring(0, index);
-		
 		// url 인코딩 한다
 		try {
 			result = URLDecoder.decode(result, "UTF-8");
@@ -40,7 +40,6 @@ public class ApiListVO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		return result;
 	}
 	
@@ -80,7 +79,6 @@ public class ApiListVO {
 				listApi.add(apivo);
 			}
 		}
-		
 	}
 	
 	public List<ApiVO> getListApi() {
@@ -90,6 +88,4 @@ public class ApiListVO {
 	public void setListApi(List<ApiVO> listApi) {
 		this.listApi = listApi;
 	}
-	
-	
 }

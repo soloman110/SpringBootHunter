@@ -99,13 +99,12 @@ public class HttpUtils {
 	
 	        // open connection
 	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	        conn.setDoInput(true);          // �Է½�Ʈ�� ��뿩��
-	        conn.setDoOutput(true);         // ��½�Ʈ�� ��뿩��
-	        conn.setUseCaches(false);       // ĳ�û�� ����
-	        conn.setReadTimeout(20000);     // Ÿ�Ӿƿ� ���� ms����
-	        conn.setRequestMethod("GET");	// GET or POST
+	        conn.setDoInput(true);
+	        conn.setDoOutput(true);
+	        conn.setUseCaches(false);
+	        conn.setReadTimeout(20000);
+	        conn.setRequestMethod("GET");
 	  
-	        // Response�ޱ�
 	        StringBuffer sb =  new StringBuffer();
 	        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 	

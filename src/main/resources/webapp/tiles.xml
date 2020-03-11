@@ -4,28 +4,6 @@
         "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 
 <tiles-definitions>
-	<!-- jsp 父布局 -->
-	<definition name="tiles/jspLayout" templateType="jsp" template="/WEB-INF/jsp/common/baseLayout.jsp">
-		<put-attribute name="header" type="jsp" value="/WEB-INF/jsp/common/header.jsp" />
-		<put-attribute name="footer" type="jsp" value="/WEB-INF/jsp/common/footer.jsp" />
-		<put-attribute name="body" type="jsp" value="" />
-	</definition>
-	
-	<definition name="tiles/jsp/*" extends="tiles/jspLayout" templateType="jsp">
-		<put-attribute name="body" type="jsp" value="/WEB-INF/jsp/{1}.jsp" />
-	</definition>
-
-	<!-- thymeleaf 父布局 -->
-<!-- 	<definition name="tiles/thymeleafLayout" templateType="thymeleaf" template="./thymeleaf/common/baseLayout">
-		<put-attribute type="thymeleaf" name="header" value="./thymeleaf/common/header" />
-		<put-attribute type="thymeleaf" name="body" value=""/> 
-		<put-attribute type="thymeleaf" name="footer" value="./thymeleaf/common/footer" />
-		<put-attribute type="thymeleaf" name="content" value="thymeleaf/{0}"/>
-	</definition> -->
-
-	<!-- <definition name="tiles/thymeleaf/*" extends="tiles/thymeleafLayout" templateType="thymeleaf">
-		<put-attribute name="body" value="./thymeleaf/templates/{1}.html" />
-	</definition> -->
 	<definition name="tiles/thymeleaf/*"  templateType="thymeleaf" template="thymeleaf/common/baseLayout">
 		<put-attribute type="thymeleaf" name="header" value="thymeleaf/common/header" />
 		<put-attribute type="thymeleaf" name="footer" value="thymeleaf/common/footer" />

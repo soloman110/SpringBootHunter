@@ -14,7 +14,6 @@ public class TaskController {
     @Resource
     private AsyncTask asyncTask ;
     
-
 	@Autowired
 	ThreadPoolTaskExecutor asyncExecutor;
     

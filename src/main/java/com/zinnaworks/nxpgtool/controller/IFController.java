@@ -1,8 +1,6 @@
 package com.zinnaworks.nxpgtool.controller;
 
-
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -18,13 +16,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zinnaworks.nxpgtool.common.ResponseCommon;
 import com.zinnaworks.nxpgtool.exception.DataNotValidException;
 import com.zinnaworks.nxpgtool.service.IFService;
-import com.zinnaworks.nxpgtool.util.CommonUtils;
 import com.zinnaworks.nxpgtool.util.JsonUtil;
 
 @RequestMapping("/nxpgtool")
 @Controller
 public class IFController {
-	private static final Logger logger = LoggerFactory.getLogger(ExcelController.class);
+	private static final Logger logger = LoggerFactory.getLogger(IFController.class);
 	
 	@Autowired
 	IFService ifService;
