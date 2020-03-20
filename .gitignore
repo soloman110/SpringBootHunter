@@ -1,0 +1,8 @@
+/target/
+/.settings
+/uploads
+/.classpath
+/.project
+/.factorypath
+*/.DS_Store
+.DS_Store

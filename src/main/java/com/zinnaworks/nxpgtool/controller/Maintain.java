@@ -252,6 +252,11 @@ public class Maintain {
 		return resultValue;
 	}
 	
+	@RequestMapping("/grid")
+	public String grid(Model model) throws FileNotFoundException {
+		return "tiles/thymeleaf/grid";
+	}
+	
 	//==============================================================================
 	public static String getUrlPath(String url) {
 		String result = null;

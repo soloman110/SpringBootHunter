@@ -1,0 +1,40 @@
+#用户名 密码配置
+security:
+  user:
+   name: admin
+   password: admin
+file:
+  upload-dir: ./uploads
+
+server:
+  port: 8888
+ 
+spring:
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  redis:
+    host: localhost
+    port: 6379
+    password: svc25bm
+    setMaxTotal: 100 
+    setMaxIdle: 100
+    setMinIdle: 100
+    second:
+      enalbed: false
+    transaction:
+      default-timeout: 1000
+second:
+  redis:
+    host: localhost
+    port: 6379
+    password: svc25bm
+    switching-milisecond: 500
+services:
+  redis:
+    connection:
+      timeout: 1
+    redirection:
+      count: 1

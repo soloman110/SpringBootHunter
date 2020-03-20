@@ -35,4 +35,20 @@ public class TaskPoolConfig {
         executor.setAwaitTerminationSeconds(1);
         return executor;
     }
+    @Bean
+    public ThreadPoolTaskExecutor gridServiceExecutor() {
+        ThreadPoolTaskExecutor threadPoolTaskExecutor=new ThreadPoolTaskExecutor();
+
+        threadPoolTaskExecutor.setCorePoolSize(10);
+        threadPoolTaskExecutor.setAllowCoreThreadTimeOut(true);// 중요
+
+        threadPoolTaskExecutor.setMaxPoolSize(10);
+        threadPoolTaskExecutor.setQueueCapacity(50);
+        threadPoolTaskExecutor.setThreadNamePrefix("grid-service-");
+        //配置拒绝策略
+        threadPoolTaskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
+        //数据初始化
+        threadPoolTaskExecutor.initialize();
+        return threadPoolTaskExecutor;
+    }
 }

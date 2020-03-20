@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<style>
+
+#content {
+	color: #229922;
+}
+
+</style>
+
+<div class="row" style="margin-left:20px; margin-top:20px">
+	<div class="col-md-12">
+	<div class="page-header">
+    	<h3>패키지상품 또는 VOD +관련상품 콘텐츠를 포함하는 grid Menu</h3>
+	</div>
+	<div id="content" class="">
+		<table id="jqGrid01"></table>
+		<div id="jqGridPager01"></div>
+	</div>
+	</div>
+</div>
+
+<head>
+<script src="/webapp/static/jqGrid/js/i18n/grid.locale-en.js"></script>
+<script src="/webapp/static/jqGrid/js/jquery.jqGrid.min.js"></script>
+<script src="/webapp/static/jquery-ui-1.12.1/jquery-ui.js"></script>
+
+<link href="/webapp/static/jqGrid/css/ui.jqgrid-bootstrap-ui.css" rel="stylesheet" />
+<link href="/webapp/static/jqGrid/css/ui.jqgrid-bootstrap.css" rel="stylesheet" />
+<link href="/webapp/static/jqGrid/css/ui.jqgrid-bootstrap4.css" rel="stylesheet" />
+<link href="/webapp/static/jqGrid/css/ui.jqgrid-bootstrap-ui.css" rel="stylesheet" />
+<link href="/webapp/static/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet" />
+
+</head>
+
+<script th:inline="javascript">
+	$(document).ready(function() {
+		/*<![CDATA[*/
+		$("#jqGrid01").jqGrid({
+        	url: "/grid/search/vodpkg",
+            datatype : "json",
+            height: 500,
+            rowNum: 30,
+            rowList: [30],
+            colModel:[
+                {name:'menuId',index:'menuId', editable: true, width:60, align: 'center', label: "그리드 MenuId"},
+                {name:'menuId',index:'menuId', editable: true, width:90, align: 'center', label: "오프레이션", formatter: viewLineBtn},
+            ],
+            pager: "#jqGridPager01",
+            viewrecords: true,
+            edit: false,
+            hidegrid:false,
+            loadonce: true,
+            jsonReader: {
+            	repeatitems: false,
+            	page: "page",
+            	total: "total",
+            	records: "records",
+            	root: "rows"
+           	},
+           	
+            loadComplete: function (data) {
+                //alert(JSON.stringify(data));
+            }
+        });
+        $("#jqGrid01").jqGrid('setGridWidth', $("#content").width() * 0.8, true);
+        
+        
+        function viewLineBtn(cellvalue, options, rowObject) 
+        {
+        	var onclick = " onclick=gridBtn(" + rowObject.menuId + ")";
+            return "<button style='padding:0 30px; margin:3px' id=" + rowObject.menuId + " onclick=gridBtn('" + rowObject.menuId + "') " +">" +  " 조회</button>"; 
+        }
+        
+		/*]]>*/
+	});
+	function gridBtn(menuId) {
+		var url = "https://xpg-nxpg-stg.skb-doj-dev01.mybluemix.net/v5/grid/grid?menu_id=" + menuId;		
+		window.open(url, "_blank");
+	}
+</script>

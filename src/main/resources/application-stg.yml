@@ -1,0 +1,37 @@
+#用户名 密码配置
+security:
+  user:
+    name: admin
+    password: admin
+file:
+  upload-dir: ./uploads
+  
+spring:
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  redis:
+    host: 10.10.223.35:6379,10.10.223.36:6379,10.10.223.37:6379,10.10.223.38:6379,10.10.223.39:6379,10.10.223.40:6379
+    port: 6379
+    password: gogwi0m3wMmsUXac22hCn8kstwLaiCCj
+    setMaxTotal: 100 
+    setMaxIdle: 100
+    setMinIdle: 100
+    second:
+     enalbed: false
+  transaction:
+    default-timeout: 1000
+second:
+  redis:
+    host: 10.10.223.35:6379,10.10.223.36:6379,10.10.223.37:6379,10.10.223.38:6379,10.10.223.39:6379,10.10.223.40:6379
+    port: 6379
+    password: gogwi0m3wMmsUXac22hCn8kstwLaiCCj
+    switching-milisecond: 500
+services:
+  redis:
+    connection:
+      timeout: 1
+    redirection:
+      count: 1

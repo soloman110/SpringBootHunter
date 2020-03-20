@@ -14,7 +14,7 @@
 		<tiles.version>2.2.2</tiles.version>
 		<json.path>2.4.0</json.path>
 		<json.path.assert>2.2.0</json.path.assert>
-
+		<spring-cloud.version>Dalston.SR1</spring-cloud.version>
 	</properties>
 
 	<dependencyManagement>
@@ -24,6 +24,13 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
 				<version>1.4.0.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -39,7 +46,7 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -159,12 +166,8 @@
 			<artifactId>tomcat-embed-jasper</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-		</dependency>
-		-->
+		<!-- <dependency> <groupId>org.apache.httpcomponents</groupId> <artifactId>httpclient</artifactId> 
+			</dependency> -->
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
@@ -184,12 +187,12 @@
 			<artifactId>json-path-assert</artifactId>
 			<version>${json.path.assert}</version>
 		</dependency>
-		
+
 		<!-- io -->
 		<dependency>
-		    <groupId>commons-io</groupId>
-		    <artifactId>commons-io</artifactId>
-		    <version>2.5</version>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
 		</dependency>
 
 		<!-- Http -->
@@ -197,8 +200,8 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpmime</artifactId>
 			<version>4.0.1</version>
-		</dependency>   
-		
+		</dependency>
+
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
@@ -209,16 +212,69 @@
 			<groupId>com.jcraft</groupId>
 			<artifactId>jsch</artifactId>
 			<version>0.1.55</version>
-		</dependency>	
-		<!-- 
-			SpringBoot1.5以上版本使用@ConfigurationProperties注解会提示：
-				When using @ConfigurationProperties it is recommended to add ‘spring-boot-configuration-processor’ 
-				to your classpath to generate configuration metadata 
-		-->
+		</dependency>
+		<!-- SpringBoot1.5以上版本使用@ConfigurationProperties注解会提示： When using @ConfigurationProperties 
+			it is recommended to add ‘spring-boot-configuration-processor’ to your classpath 
+			to generate configuration metadata -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cloud-connectors</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-zuul</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>redis.clients</groupId>
+					<artifactId>jedis</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.data</groupId>
+					<artifactId>spring-data-redis</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+			<version>1.8.0.RELEASE</version>
 		</dependency>
 
 	</dependencies>
@@ -229,6 +285,15 @@
 		</repository>
 	</repositories>
 	<build>
+		<finalName>${project.artifactId}-${version}</finalName>
+		<!-- filter를 추가 시  font-awesome icon 이미지가 표시안돼서 maven-resources-plugin에 해당내용 추가 -->
+		<resources>
+			<resource>
+            	<directory>src/main/resources</directory>
+            	<filtering>true</filtering>
+			</resource>
+		</resources>
+		
 		<plugins>
 			<!-- <plugin> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-maven-plugin</artifactId> 
 				<configuration> <fork>true</fork> </configuration> <dependencies> spring热部署 
@@ -257,6 +322,38 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+			 <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>woff</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>eot</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>svg</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
+	<profiles>
+        <profile>
+            <id>stg</id>
+            <properties>
+                <environment>stg</environment>
+                <activatedProperties>stg</activatedProperties>
+            </properties>
+        </profile>
+        <profile>
+            <id>local</id>
+            <properties>
+                <environment>local</environment>
+                <activatedProperties>local</activatedProperties>
+            </properties>
+            <activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+        </profile>
+    </profiles>
 </project>
