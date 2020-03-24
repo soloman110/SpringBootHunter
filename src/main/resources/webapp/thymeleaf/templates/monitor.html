@@ -191,7 +191,6 @@ small {font-size: .875em;}
     				$("#mappingsTable").bootstrapTable("destroy").bootstrapTable({ 
 						url: "/monitor/mappings?server=" + $("#server_select").children('option:selected').val(),
 						cache:true,
-						showLoading: false,
 						columns: [
 							{
 								field: 'uri',

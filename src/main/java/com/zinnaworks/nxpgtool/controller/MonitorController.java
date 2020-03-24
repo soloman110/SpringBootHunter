@@ -6,6 +6,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +32,7 @@ import com.zinnaworks.nxpgtool.util.CastUtil;
 public class MonitorController {
 
 	private static final Logger logger = LoggerFactory.getLogger(MonitorController.class);
+	ExecutorService executor = Executors.newCachedThreadPool();
 
 	@Autowired
 	MonitorService monitor;
@@ -58,8 +66,32 @@ public class MonitorController {
 	@RequestMapping("/detail")
 	@ResponseBody
 	public Map<String, Object> detail(@RequestParam("server") String server) throws IOException {
-		Map<String, Object> health = monitor.getHealth(server);
-		Map<String, Object> metrics = monitor.getMetrics(server);
+		
+		Future<Map<String, Object>> healthFuture = executor.submit(() -> {return monitor.getHealth(server);});
+		Future<Map<String, Object>> metircsFuture = executor.submit(() -> {return monitor.getMetrics(server);});
+		
+		Map<String, Object> health = Collections.emptyMap();
+		try {
+			health = healthFuture.get(10, TimeUnit.SECONDS);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		} catch (ExecutionException e1) {
+			e1.printStackTrace();
+		} catch (TimeoutException e1) {
+			e1.printStackTrace();
+		}
+		
+		Map<String, Object> metrics = Collections.emptyMap();
+		try {
+			metrics = metircsFuture.get(10, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		} catch (TimeoutException e) {
+			e.printStackTrace();
+		}
+		
 		Map<String, Object> result = new HashMap<>();
 		result.put("health", health);
 		result.put("metrics", metrics);
