@@ -65,6 +65,10 @@ small {font-size: .875em;}
     	/*<![CDATA[*/
 		//https://www.cnblogs.com/51kata/p/5201977.html
 		document.all.type.options[0].selected=true;
+
+		var loading = new KZ_Loading({time: 15000});
+		loading.show();
+		
 		$('#server_select').change(function(){  
 			loading.show();
 			var selectedTab = localStorage.getItem('selectedTab');
@@ -73,9 +77,6 @@ small {font-size: .875em;}
 				loadTab(selectedTab);
 			}
 		})
-		
-		var loading = new KZ_Loading({time: 15000});
-		loading.show();
     	
 		var callbacks = {
     			"env": function(jsonData) {
@@ -130,7 +131,7 @@ small {font-size: .875em;}
 						onLoadError: function(){
 							loading.hide();
 						}
-					});
+					}).bootstrapTable("hideLoading");
     			},
     			"thread": function(jsonData) {
     				$("#threadTable").bootstrapTable("destroy").bootstrapTable({ 
@@ -184,12 +185,13 @@ small {font-size: .875em;}
 						onLoadError: function(){
 							loading.hide();
 						}
-					});
+					}).bootstrapTable("hideLoading");
     			},
     			"mappings": function(jsonData) {
     				$("#mappingsTable").bootstrapTable("destroy").bootstrapTable({ 
 						url: "/monitor/mappings?server=" + $("#server_select").children('option:selected').val(),
 						cache:true,
+						showLoading: false,
 						columns: [
 							{
 								field: 'uri',
@@ -231,7 +233,7 @@ small {font-size: .875em;}
 						onLoadError: function(){
 							loading.hide();
 						}
-					});
+					}).bootstrapTable("hideLoading");
     			},
 				"detail": function(jsonData) {
 					loading.hide();
@@ -293,12 +295,13 @@ small {font-size: .875em;}
     			}
     	}
     	function request(activeTab) {
+			var serverType = $("#server_select").children('option:selected').val();
     		$.ajax({
     			type : "get",
-    			url : "/monitor/" + activeTab + '?server=' + $("#server_select").children('option:selected').val(),
+    			url : "/monitor/" + activeTab,
     			async : false,
     			dataType : "json",
-    			data : {server : "STG"},
+    			data : {server : serverType},
     			success : function(data) {
     				callbacks[activeTab](data);		
     			},
@@ -579,6 +582,7 @@ small {font-size: .875em;}
 					data-show-export="true"
 					data-minimum-count-columns="2"
 					data-pagination="true"
+					data-locale="en-US"
 				>
 		  		</table>		  	
 		  	</div>
@@ -589,6 +593,7 @@ small {font-size: .875em;}
 					data-show-fullscreen="true"
 					data-click-to-select="true"
 					data-minimum-count-columns="2"
+					data-locale="en-US"
 				>
 		  		</table>
 		  	</div>
@@ -600,6 +605,7 @@ small {font-size: .875em;}
 					data-click-to-select="true"
 					data-minimum-count-columns="2"
 					data-show-refresh="true"
+					data-locale="en-US"
 				>
 		  		</table>
 		  	</div>

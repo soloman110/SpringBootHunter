@@ -31,12 +31,6 @@ public class MonitorController {
 
 	@RequestMapping("/index")
 	public String index(Model model) throws IOException {
-		Map<String, Object> obj = monitor.getMetrics("stg");
-		Map<String, Object> health = monitor.getHealth("stg");
-
-		model.addAttribute("metrics", obj);
-		model.addAttribute("health", health);
-
 		return "tiles/thymeleaf/monitor";
 	}
 
