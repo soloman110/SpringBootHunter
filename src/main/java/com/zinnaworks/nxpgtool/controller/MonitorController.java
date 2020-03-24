@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -13,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,9 +94,18 @@ public class MonitorController {
 			e.printStackTrace();
 		}
 		
-		Map<String, Object> result = new HashMap<>();
-		result.put("health", health);
-		result.put("metrics", metrics);
+		Map<String, Object> metricsFiltered = metrics.entrySet().stream()
+				.filter(x -> !x.getKey().startsWith("gauge"))
+				.collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue()));
+		
+		Map<String, Object> result = new LinkedHashMap<>();
+		Object redis = health.get("redis");
+		health.remove("redis");
+		
+		result.put("Health", health);
+		result.put("Redis", redis);
+		result.put("Metrics", metricsFiltered);
+		
 		return result;
 	}
 

@@ -81,6 +81,7 @@ small {font-size: .875em;}
 		var callbacks = {
     			"env": function(jsonData) {
     				loading.hide();
+    				$("#env").empty();
     				$.each(jsonData, function(index, value) {
     					var $table = createTable(index, value, 1);
     					$('#env').append($table);
@@ -235,62 +236,12 @@ small {font-size: .875em;}
 					}).bootstrapTable("hideLoading");
     			},
 				"detail": function(jsonData) {
+					$("#detail").empty();
 					loading.hide();
-    				var health = jsonData.health;
-    				if(health) {
-    					var diskSpace_status = health.diskSpace.status;
-    					var diskSpace_total = health.diskSpace.total;
-    					
-    					var redis_status = health.redis.status;
-    					var primaryJedisConnection_status = health.redis.primaryJedisConnection.status;
-    					var primaryJedisConnection_slots_fail = health.redis.primaryJedisConnection.slots_fail;
-    					var primaryJedisConnection_cluster_size = health.redis.primaryJedisConnection.cluster_size;
-    					var primaryJedisConnection_slots_up = health.redis.primaryJedisConnection.slots_up;
-    					
-    					
-    					var secondJedisConnection_status = health.redis.secondJedisConnection.status;
-    					var secondJedisConnection_slots_fail = health.redis.secondJedisConnection.slots_fail;
-    					var secondJedisConnection_cluster_size = health.redis.secondJedisConnection.cluster_size;
-    					var secondJedisConnection_slots_up = health.redis.secondJedisConnection.slots_up;
-    					
-    					$("#diskSpace_status").html(diskSpace_status);
-    					$("#diskSpace_total").html(diskSpace_total);
-    					
-    					$("#primaryJedisConnection_status").html(primaryJedisConnection_status);
-    					$("#primaryJedisConnection_slots_fail").html(primaryJedisConnection_slots_fail);
-    					$("#primaryJedisConnection_csize").html(primaryJedisConnection_cluster_size);
-    					$("#primaryJedisConnection_slotsup").html(primaryJedisConnection_slots_up);
-    					
-    					
-    					$("#secondJedisConnection_status").html(secondJedisConnection_status);
-    					$("#secondJedisConnection_slots_fail").html(secondJedisConnection_slots_fail);
-    					$("#secondJedisConnection_csize").html(secondJedisConnection_cluster_size);
-    					$("#secondJedisConnection_slotsup").html(secondJedisConnection_slots_up);
-    					
-    				}
-    				var metrics = jsonData.metrics;
-    				var mem = metrics.mem;
-    				var mem_free = metrics['mem.free'];
-    				var heap_init = metrics['heap.init'];
-    				var heap = metrics['heap'];
-    				var heap_used = metrics['heap.used'];
-    				var heap_committed = metrics['heap.committed'];
-    				
-    				var threads = metrics['threads'];
-    				var threads_peak = metrics['threads.peak'];
-    				var threads_daemon = metrics['threads.daemon'];
-    				var threads_totalStarted = metrics['threads.totalStarted'];
-    				
-    				$("#mem").html(mem);
-    				$("#mem_free").html(mem_free);
-    				$("#heap_init").html(heap_init);
-    				$("#heap").html(heap);
-    				$("#heap_used").html(heap_used);
-    				$("#heap_committed").html(heap_committed);
-    				$("#threads").html(threads);
-    				$("#threads_peak").html(threads_peak);
-    				$("#threads_daemon").html(threads_daemon);
-    				$("#threads_totalStarted").html(threads_totalStarted);
+    				$.each(jsonData, function(index, value) {
+    					var $table = createTable(index, value, 1);
+    					$('#detail').append($table);
+    				});
     			}
     	}
     	function request(activeTab) {
@@ -395,181 +346,7 @@ small {font-size: .875em;}
 		</ul>
 		<!-- Tab panes -->
 		<div class="tab-content" style="margin-top:10px" id="monitor-tab">
-			<div role="tabpanel" class="tab-pane active" id="detail">
-					<div class="row">
-						<div class="col-md-5">
-							<div class="panel panel-info">
-				    			<div class="panel-heading">
-				    				<h3 class="panel-title">Info</h3>
-				    			</div>
-				    			<div class="panel-body">
-									<table class="table">
-										<thead>
-									    	<tr>
-									    		<th  style="color:green; font-weight:bold">Memory</th>
-									      		<th></th>
-									    	</tr>
-									  	</thead>
-									  <tbody>
-										    <tr>
-										      <td>mem</td>
-										      <td id="mem"></td>
-										    </tr>
-										    <tr>
-										      <td>mem.free</td>
-										      <td id="mem_free"></td>
-										    </tr>
-									  </tbody>
-									</table>
-									
-									<table class="table">
-										<thead>
-									    	<tr>
-									    		<th  style="color:green; font-weight:bold">Heap</th>
-									      		<th></th>
-									    	</tr>
-									  	</thead>
-									  	<tbody>
-										    <tr>
-										      <td>heap.init</td>
-										      <td id="heap_init"></td>
-										    </tr>
-										    <tr>
-										      <td>heap</td>
-										      <td id="heap"></td>
-										    </tr>
-										    <tr>
-										      <td>heap.used</td>
-										      <td id="heap_used"></td>
-										    </tr>
-										     <tr>
-										      <td>heap.committed</td>
-										      <td id="heap_committed"></td>
-										    </tr>
-									  	</tbody>
-									</table>
-									
-									<table class="table">
-										<thead>
-									    	<tr>
-									    		<th  style="color:green; font-weight:bold">Thread</th>
-									      		<th></th>
-									    	</tr>
-									  	</thead>
-									 	<tbody>
-											<tr>
-										    	<td>threads</td>
-										    	<td id="threads"></td>
-										    </tr>
-										    <tr>
-										    	<td>threads.peak</td>
-										    	<td id="threads_peak"></td>
-										    </tr>
-										    <tr>
-										    	<td>threads.daemon</td>
-										    	<td id="threads_daemon"></td>
-										    </tr>
-										   	<tr>
-										    	<td>threads.totalStarted</td>
-										    	<td id="threads_totalStarted"></td>
-										   	</tr>
-									  </tbody>
-									</table>
-				    			</div>
-							</div>
-						</div>
-						<div class="col-md-5">
-							<div class="panel panel-info">
-				    			<div class="panel-heading">
-				    				<h3 class="panel-title">Health</h3>
-				    			</div>
-				    			<div class="panel-body">
-									<table class="table" id="info_table">
-										<thead>
-									    	<tr><th  style="color:green; font-weight:bold">diskSpace</th>
-									      	<th></th>
-									    </tr>
-									  </thead>
-									  <tbody>
-										    <tr>
-										      <td>status</td>
-										      <td id="diskSpace_status"></td>
-										    </tr>
-										    <tr>
-										      <td>total</td>
-										      <td id="diskSpace_total"></td>
-										    </tr>
-									  </tbody>
-									</table>
-									<table class="table">
-									<thead>
-										<tr>
-									    	<th style="color:green; font-weight:bold">redis</th>
-									      	<th></th>
-									    </tr>
-									 </thead>
-									 <tbody>
-									 	<tr>
-									    	<td>status</td>
-									      	<td id="redis_status"> </td>
-									    </tr>
-									    <tr>
-									     	<td>primaryJedisConnection</td>
-                        					<td>
-					                            <table class="table table-bordered" id="info_table">
-						                        	<tbody>
-						                                <tr>
-						                                  <td>status</td>
-						                                  <td id="primaryJedisConnection_status"></td>
-						                                </tr>
-						                                <tr>
-						                                  <td>cluster_size</td>
-						                                  <td id="primaryJedisConnection_csize"></td>
-						                                </tr>
-						                                <tr>
-						                                  <td>slots_up</td>
-						                                  <td id="primaryJedisConnection_slotsup"></td>
-						                                </tr>
-						                                 <tr>
-						                                  	<td>slots_fail</td>
-						                                  	<td id="primaryJedisConnection_slots_fail"></td>
-						                                </tr>
-						                            </tbody>
-					                            </table>
-                        					</td>
-									    </tr>
-                      	    			<tr>
-									      	<td>secondJedisConnection</td>
-                        					<td>
-					                            <table class="table table-bordered">
-					                              <tbody>
-						                                <tr>
-						                                  <td>status</td>
-						                                  <td id="secondJedisConnection_status"></td>
-						                                </tr>
-						                                <tr>
-						                                  <td>cluster_size</td>
-						                                  <td id="secondJedisConnection_csize"></td>
-						                                </tr>
-						                                <tr>
-						                                  <td>slots_up</td>
-						                                  <td id="secondJedisConnection_slotsup"></td>
-						                                </tr>
-						                                <tr>
-						                                  <td>total</td>
-						                                  <td id="secondJedisConnection_slots_fail"></td>
-						                                </tr>
-					                            	</tbody>
-					                            </table>
-				                        	</td>
-									    </tr>
-									  </tbody>
-									</table>
-				    			</div>
-							</div>
-						</div>
-					</div>
-			</div>
+			<div role="tabpanel" class="tab-pane active" id="detail"></div>
 		  	<div role="tabpanel" class="tab-pane " id="env"></div>
 		  	<div role="tabpanel" class="tab-pane " id="thread">
 				<table class="beans table is-fullwidth is-hoverable table-responsive" id="threadTable" 
