@@ -50,6 +50,14 @@ public class NXPGCommon {
 	public static final String MENU_LIGHTHOMEGNB = "menu_lightHomeGnb";
 
 	
+	public static boolean isTestMode = false;
+	
+	@Value("${testMode}")
+    private void setTestMode(boolean testMode){
+		NXPGCommon.isTestMode = testMode;
+    }
+	
+	
 	public static boolean useFirstRedis = true;
 	
 	public static boolean isUseFirstRedis() {

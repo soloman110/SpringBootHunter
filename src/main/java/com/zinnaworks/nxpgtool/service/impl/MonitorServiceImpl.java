@@ -14,22 +14,23 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.zinnaworks.nxpgtool.common.ServerEnum;
-import com.zinnaworks.nxpgtool.controller.IFController;
-import com.zinnaworks.nxpgtool.entity.MetricsInfo;
+import com.zinnaworks.nxpgtool.common.NXPGCommon;
+import com.zinnaworks.nxpgtool.config.Servers;
 import com.zinnaworks.nxpgtool.service.MonitorService;
 import com.zinnaworks.nxpgtool.util.CastUtil;
 import com.zinnaworks.nxpgtool.util.HttpUtils;
-import com.zinnaworks.nxpgtool.util.JsonUtil;
 
 @Service
 public class MonitorServiceImpl implements MonitorService{
 	private static final Logger logger = LoggerFactory.getLogger(MonitorServiceImpl.class);
+	
+	@Autowired
+	Servers servers;
 	
 	private static Map<String, String> testFiles = new HashMap<>();
 	static {
@@ -40,27 +41,12 @@ public class MonitorServiceImpl implements MonitorService{
 		testFiles.put("mappings", "src/mappings.json");
 		testFiles.put("dump", "src/dump.json");
 	}
-	
+
 	@Override
-	public MetricsInfo getMetrics(ServerEnum server) {
-		try {
-			String url = server.getUri();
-			String envUrl = url.substring(0, url.indexOf(".net")+4)+"/metrics";
-			logger.info(envUrl);
-			String strTemp = getActuatorInfo(server, "metrics");;
-			JSONObject jobj = new JSONObject(strTemp);
-			
-			int men = (int) jobj.get("mem");
-			logger.info(String.valueOf(men));
-			return null;
-			
-		} catch (Exception e) {
-			System.out.println(e.toString());
-			return null;
+	public Map<String, Object> getMetrics(String server) throws IOException {
+		if(NXPGCommon.isTestMode) {
+			return getMetricsMapTest();
 		}
-	}
-	@Override
-	public Map<String, Object> getMetricsMap(ServerEnum server) {
 		try {
 			String strTemp = getActuatorInfo(server, "metrics");
 			Map<String, Object> map1 = CastUtil.StringToJsonMap(strTemp);
@@ -72,14 +58,10 @@ public class MonitorServiceImpl implements MonitorService{
 	}
 	
 	@Override
-	public Map<String, Object> getMetricsMapTest(ServerEnum server) throws IOException {
-		StringBuilder strTemp = readJsonFile("src/metrics.json");
-		Map<String, Object> map1 = CastUtil.StringToJsonMap(strTemp.toString());
-		return map1;
-	}
-	
-	@Override
-	public Map<String, Object> getEnv(ServerEnum server) {
+	public Map<String, Object> getEnv(String server) {
+		if(NXPGCommon.isTestMode) {
+			return getEnvTest();
+		}
 		try {
 			String strTemp = getActuatorInfo(server, "env");
 			Map<String, Object> map = CastUtil.StringToJsonMap(strTemp);
@@ -91,11 +73,13 @@ public class MonitorServiceImpl implements MonitorService{
 	}
 
 	@Override
-	public Map<String, Object> getHealth(ServerEnum server) {
+	public Map<String, Object> getHealth(String server) {
+		if(NXPGCommon.isTestMode) {
+			return getHealthTest();
+		}
 		try {
 			String strTemp = getActuatorInfo(server, "health");
-			//Map<String, String> map = JsonUtil.jsonToObjectHashMap(strTemp, String.class, String.class);
-			saveJson(strTemp, testFiles.get("health"));
+			//saveJson(strTemp, testFiles.get("health"));
 			Map<String, Object> map1 = CastUtil.StringToJsonMap(strTemp);
 			return map1;
 		} catch (Exception e) {
@@ -103,109 +87,81 @@ public class MonitorServiceImpl implements MonitorService{
 			return null;
 		}
 	}
-	private String getActuatorInfo(ServerEnum server, String type) {
-		String url = server.getUri();
-		String envUrl = url.substring(0, url.indexOf(".net")+4)+"/" + type;
-		logger.info(envUrl);
-		return HttpUtils.getData(envUrl);
-	}
-	
+	/**
+	 * 
+	 * 캐시는 지원하지 않음. 성능 테스트 후 캐시사용여부 결정.
+	 * 
+	 */
 	@Override
-	public Map<String, Object> getHealthTest(ServerEnum server) {
-		try {
-			String strTemp = readJsonFile(testFiles.get("health")).toString();
-			Map<String, Object> map = CastUtil.StringToJsonMap(strTemp);
-			return map;
-		} catch (Exception e) {
-			logger.error(e.toString());
-			return null;
-		}
-	}
-	@Override
-	public Map<String, Object> getEnvTest(ServerEnum server) {
-		try {
-			//String strTemp = getActuatorInfo(server, "env");
-			String strTemp = readJsonFile(testFiles.get("env")).toString();
-			Map<String, Object> map = CastUtil.StringToJsonMap(strTemp);
-			return map;
-		} catch (Exception e) {
-			logger.error(e.toString());
-			return null;
-		}
-	}
-	private void saveJson(String strTemp, String fstr) throws IOException {
-		FileWriter f = new FileWriter(new File(fstr));
-		BufferedWriter writer = new BufferedWriter(f);
-		writer.write(strTemp);
-		writer.close();
-		f.close();
-	}
-	@Override
-	public List<Map<String, Object>> getBeans(ServerEnum server, boolean isCacheMode) {
-		List<Map<String, Object>> beanList = Collections.emptyList();
+	public List<Map<String, Object>> getBeans(String server, boolean isCacheMode) {
 		String strTemp = "";
-		try {
-			if (isCacheMode) {
+		List<Map<String, Object>> beanList = Collections.emptyList();
+		
+		if(NXPGCommon.isTestMode) {
+			try {
 				strTemp = readJsonFile(testFiles.get("beans")).toString();
-			} else {
-				strTemp = getActuatorInfo(ServerEnum.STG, "beans");
-			} 
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return CastUtil.StringToJsonListMap(strTemp);
+		}
+		try {
+			strTemp = getActuatorInfo(server, "beans");
+//			if (isCacheMode) {
+//				strTemp = readJsonFile(testFiles.get("beans")).toString();
+//			} else {
+//				strTemp = getActuatorInfo(server, "beans");
+//			} 
 		} catch (Exception e) {
 			logger.error(e.toString());
 		}
 		beanList = CastUtil.StringToJsonListMap(strTemp);
 		return beanList;
 	}
-	
+
 	@Override
-	public String getActuatorByName(ServerEnum server, String actuatorName) {
-		String strJson = "";
-		try {
-			String fn = testFiles.get(actuatorName);
-			File beansFile = new File(fn);
-			if(!beansFile.exists()) {
-				strJson = getActuatorInfo(ServerEnum.STG, actuatorName);
-				saveJson(strJson, testFiles.get(actuatorName));
-			} else {
-				strJson = readJsonFile(testFiles.get(actuatorName)).toString();
-			}
-			return strJson;
-		} catch (Exception e) {
-			logger.error(e.toString());
+	public List<Map<String, Object>> threads(String server) {
+		if(NXPGCommon.isTestMode) {
+			return threadsTest(server);
 		}
-		return strJson;
-	}
-	
-	
-	
-	private StringBuilder readJsonFile(String fstr) throws FileNotFoundException, IOException {
-		StringBuilder strTemp = new StringBuilder();
-		
-		FileReader f = new FileReader(new File(fstr));
-		BufferedReader reader = new BufferedReader(f);
-		
-		String temp;
-		while((temp = reader.readLine()) != null) {
-			strTemp.append(temp);
-		}
-		reader.close();
-		f.close();
-		return strTemp;
-	}
-	//너무 복잡하다..
-	@Override
-	public List<Map<String, Object>> mappings(ServerEnum server, boolean isCacheMode) {
-		Map<String, Object> mappingsMap = Collections.emptyMap();
+		List<Map<String, Object>> threadList = Collections.emptyList();
 		String strTemp = "";
 		try {
-			if (isCacheMode) {
-				strTemp = readJsonFile(testFiles.get("mappings")).toString();
-			} else {
-				strTemp = getActuatorInfo(ServerEnum.STG, "mappings");
-			} 
+			strTemp = getActuatorInfo(server, "dump");
 		} catch (Exception e) {
 			logger.error(e.toString());
 		}
+		threadList = CastUtil.StringToJsonListMap(strTemp);
+		return threadList;
+	}
+	
+	//너무 복잡하다..
+	@Override
+	public List<Map<String, Object>> mappings(String server, boolean isCacheMode) {
+		String strTemp = "";
+		Map<String, Object> mappingsMap = Collections.emptyMap();
+		
+		if(NXPGCommon.isTestMode) {
+			try {
+				strTemp = readJsonFile(testFiles.get("mappings")).toString();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				if (isCacheMode) {
+				} else {
+				}
+				strTemp = getActuatorInfo(server, "mappings");
+			} catch (Exception e) {
+				logger.error(e.toString());
+			}
+		}
+		
 		mappingsMap = CastUtil.StringToJsonMap(strTemp);
 		
 		List<Map<String, Object>> list = new ArrayList<>();
@@ -217,6 +173,50 @@ public class MonitorServiceImpl implements MonitorService{
 			list.add(vMap);
 		}
 		return list;
+	}
+
+	@Override
+	public String getActuatorByName(String server, String actuatorName) {
+		String strJson = "";
+		try {
+			String fn = testFiles.get(actuatorName);
+			File beansFile = new File(fn);
+			if(!beansFile.exists()) {
+				strJson = getActuatorInfo(server, actuatorName);
+				saveJson(strJson, testFiles.get(actuatorName));
+			} else {
+				strJson = readJsonFile(testFiles.get(actuatorName)).toString();
+			}
+			return strJson;
+		} catch (Exception e) {
+			logger.error(e.toString());
+		}
+		return strJson;
+	}
+	private Map<String, Object> getMetricsMapTest() throws IOException {
+		StringBuilder strTemp = readJsonFile("src/metrics.json");
+		Map<String, Object> map1 = CastUtil.StringToJsonMap(strTemp.toString());
+		return map1;
+	}
+	private Map<String, Object> getHealthTest() {
+		try {
+			String strTemp = readJsonFile(testFiles.get("health")).toString();
+			Map<String, Object> map = CastUtil.StringToJsonMap(strTemp);
+			return map;
+		} catch (Exception e) {
+			logger.error(e.toString());
+			return null;
+		}
+	}
+	private Map<String, Object> getEnvTest() {
+		try {
+			String strTemp = readJsonFile(testFiles.get("env")).toString();
+			Map<String, Object> map = CastUtil.StringToJsonMap(strTemp);
+			return map;
+		} catch (Exception e) {
+			logger.error(e.toString());
+			return null;
+		}
 	}
 	private Map<String, String> parseMappingsInfo(String mappinginfo) {
 		if(StringUtils.isEmpty(mappinginfo)) {
@@ -252,17 +252,42 @@ public class MonitorServiceImpl implements MonitorService{
 		}
 		return map;
 	}
-	@Override
-	public List<Map<String, Object>> threads(ServerEnum server) {
-		List<Map<String, Object>> beanList = Collections.emptyList();
+	private StringBuilder readJsonFile(String fstr) throws FileNotFoundException, IOException {
+		StringBuilder strTemp = new StringBuilder();
+		
+		FileReader f = new FileReader(new File(fstr));
+		BufferedReader reader = new BufferedReader(f);
+		
+		String temp;
+		while((temp = reader.readLine()) != null) {
+			strTemp.append(temp);
+		}
+		reader.close();
+		f.close();
+		return strTemp;
+	}
+	private String getActuatorInfo(String server, String type) {
+		String url = servers.getServerInfo(server).getUrl();
+		String envUrl = url.substring(0, url.indexOf(".net")+4)+"/" + type;
+		return HttpUtils.getData(envUrl);
+	}
+	private List<Map<String, Object>> threadsTest(String server) {
+		List<Map<String, Object>> threadList = Collections.emptyList();
 		String strTemp = "";
 		try {
-			//strTemp = getActuatorInfo(ServerEnum.STG, "dump");
 			strTemp = readJsonFile(testFiles.get("dump")).toString();
 		} catch (Exception e) {
 			logger.error(e.toString());
 		}
-		beanList = CastUtil.StringToJsonListMap(strTemp);
-		return beanList;
+		threadList = CastUtil.StringToJsonListMap(strTemp);
+		return threadList;
+	}
+	
+	private void saveJson(String strTemp, String fstr) throws IOException {
+		FileWriter f = new FileWriter(new File(fstr));
+		BufferedWriter writer = new BufferedWriter(f);
+		writer.write(strTemp);
+		writer.close();
+		f.close();
 	}
 }

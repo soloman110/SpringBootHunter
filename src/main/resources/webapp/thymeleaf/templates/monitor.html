@@ -5,7 +5,7 @@
 .right {
   float: right; text-align: left
 }
-#server {
+#server_select {
   width: 100px;
 }
 
@@ -64,13 +64,20 @@ small {font-size: .875em;}
     $(function(){
     	/*<![CDATA[*/
 		//https://www.cnblogs.com/51kata/p/5201977.html
+		document.all.type.options[0].selected=true;
+		$('#server_select').change(function(){  
+			loading.show();
+			var selectedTab = localStorage.getItem('selectedTab');
+			if (selectedTab) {
+				$('a[data-toggle="tab"][href="' +selectedTab + '"]').tab('show');
+				loadTab(selectedTab);
+			}
+		})
+		
 		var loading = new KZ_Loading({time: 15000});
 		loading.show();
     	
 		var callbacks = {
-    			"health": function(jsonData) {
-    				//alert(jsonDatas);
-    			},
     			"env": function(jsonData) {
     				loading.hide();
     				$.each(jsonData, function(index, value) {
@@ -80,9 +87,9 @@ small {font-size: .875em;}
     			},
     			"beans": function(jsonData) {
 		    		//https://blog.csdn.net/javahighness/article/details/73929108
-    				$("#beansTable").bootstrapTable({ 
-						url: "/monitor/beans?server=stg",
-						cache:true,
+    				$("#beansTable").bootstrapTable("destroy").bootstrapTable({ 
+    					url: "/monitor/beans?server=" + $("#server_select").children('option:selected').val(),
+						//cache:true,
 						detailFormatter: function (index,row, $element){
 							return createTable(null, row, 1);
 						},		  
@@ -126,8 +133,8 @@ small {font-size: .875em;}
 					});
     			},
     			"thread": function(jsonData) {
-    				$("#threadTable").bootstrapTable({ 
-						url: "/monitor/thread?server=stg",
+    				$("#threadTable").bootstrapTable("destroy").bootstrapTable({ 
+						url: "/monitor/thread?server=" + $("#server_select").children('option:selected').val(),
 						cache:true,
 						pageSize : 12,
 						detailFormatter: function (index,row, $element){
@@ -180,8 +187,8 @@ small {font-size: .875em;}
 					});
     			},
     			"mappings": function(jsonData) {
-    				$("#mappingsTable").bootstrapTable({ 
-						url: "/monitor/mappings?server=stg",
+    				$("#mappingsTable").bootstrapTable("destroy").bootstrapTable({ 
+						url: "/monitor/mappings?server=" + $("#server_select").children('option:selected').val(),
 						cache:true,
 						columns: [
 							{
@@ -288,7 +295,7 @@ small {font-size: .875em;}
     	function request(activeTab) {
     		$.ajax({
     			type : "get",
-    			url : "/monitor/" + activeTab,
+    			url : "/monitor/" + activeTab + '?server=' + $("#server_select").children('option:selected').val(),
     			async : false,
     			dataType : "json",
     			data : {server : "STG"},
@@ -341,11 +348,19 @@ small {font-size: .875em;}
     		e.preventDefault();
     		loading.show();
             var activeTab = $(e.target).attr("aria-controls");
-            
-        	setTimeout(function() {
-        		request(activeTab);
-        	}, 200);
+            localStorage.setItem('selectedTab', activeTab);
+            loadTab(activeTab);
         });
+		
+		function loadTab(activeTab) {
+			if(activeTab != "detail" && activeTab != "env") {
+				callbacks[activeTab](null);
+			} else {
+	        	setTimeout(function() {
+	        		request(activeTab);
+	        	}, 200);				
+			}
+		}
 		//Timeout로 안하면, 로딩화면 표시가 안돼네..나중에 확인해야함.		
     	setTimeout(function() {
     		request("detail");
@@ -359,9 +374,9 @@ small {font-size: .875em;}
 <div style="margin-top:20px" class="row">
 	<div class="col-md-11">
    		<h2 class="form-inline">시스템 모니터링
-   			<select class="form-control text-center" name="type" id="server">
-				<option value="DEV">dev</option>
+   			<select class="form-control text-center" name="type" id="server_select">
 				<option value="STG">stg</option>
+				<option value="DEV">dev</option>
 				<option value="SUY">suy</option>
 				<option value="SSU">ssu</option>
 			</select>
@@ -584,6 +599,7 @@ small {font-size: .875em;}
 					data-detail-view="true"
 					data-click-to-select="true"
 					data-minimum-count-columns="2"
+					data-show-refresh="true"
 				>
 		  		</table>
 		  	</div>

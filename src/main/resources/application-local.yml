@@ -7,7 +7,7 @@ file:
   upload-dir: ./uploads
 
 server:
-  port: 8888
+  port: 9991
  
 spring:
   http:
@@ -38,3 +38,13 @@ services:
       timeout: 1
     redirection:
       count: 1
+servers:
+  - type: stg
+    url: https://xpg-nxpg-stg.skb-doj-dev01.mybluemix.net/
+  - type: dev
+    url: https://xpg-nxpg-dev.skb-doj-dev01.mybluemix.net/
+  - type: ssu
+    url: https://xpg-nxpg-svc.skb-ssu-prd02.mybluemix.net/
+  - type: suy
+    url: https://xpg-nxpg-svc.skb-suy-prd01.mybluemix.net/
+testMode: true

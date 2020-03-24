@@ -29,6 +29,8 @@ import java.util.List;
 
 import javax.servlet.Filter;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -52,6 +54,7 @@ import com.zinnaworks.nxpgtool.Application;
 import com.zinnaworks.nxpgtool.interceptor.LoginInterceptor;
 
 @Configuration
+@EnableAutoConfiguration
 @ComponentScan(basePackageClasses = Application.class, useDefaultFilters = true)
 public class ServletContextConfig extends WebMvcConfigurationSupport {
 
