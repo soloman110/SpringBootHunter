@@ -31,9 +31,9 @@ public class GridController {
 	
 	@RequestMapping("/search/vodpkg")
 	@ResponseBody
-	public Map<String, Object> search() throws Exception {
+	public List<Map<String, String>> search() throws Exception {
 		List<String> menuList = gridService.searchVodPkg();
-		List<Map<String, String>> mapList =  menuList.parallelStream().map(new Function<String, Map<String, String>>() {
+		List<Map<String, String>> mapList = menuList.parallelStream().map(new Function<String, Map<String, String>>() {
 			@Override
 			public Map<String, String> apply(String menuId) {
 				Map<String, String> map = new HashMap<>();
@@ -42,12 +42,6 @@ public class GridController {
 			}
 		}).collect(Collectors.toList());
 		
-		Map<String, Object> map = new HashMap<>();
-		map.put("page", 1);
-		map.put("total", (mapList.size() / 30) + 1);
-		map.put("records", mapList.size());
-		map.put("rows", mapList);
-		return map;
+		return mapList;
 	}
-	
 }
