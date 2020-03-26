@@ -9,7 +9,8 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.util.StringUtils;
+
+import com.zinnaworks.nxpgtool.entity.ServerInfo;
 
 import lombok.Data;
 
@@ -28,13 +29,6 @@ public class Servers {
 		for(ServerInfo server : servers) {
 			serverMap.put(server.getType(), server);
 		}
-	}
-	
-	@Data
-	public static class ServerInfo {
-		private String type;
-		private String url;
-		
 	}
 	//예외처리를 안 했다...
 	public ServerInfo getServerInfo(String name) {

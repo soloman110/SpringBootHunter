@@ -1,6 +1,7 @@
 package com.zinnaworks.nxpgtool.controller;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zinnaworks.nxpgtool.common.ResponseCommon;
+import com.zinnaworks.nxpgtool.config.Servers;
+import com.zinnaworks.nxpgtool.entity.ServerInfo;
 import com.zinnaworks.nxpgtool.exception.DataNotValidException;
 import com.zinnaworks.nxpgtool.service.IFService;
 import com.zinnaworks.nxpgtool.util.JsonUtil;
@@ -26,9 +29,15 @@ public class IFController {
 	@Autowired
 	IFService ifService;
 	
+
+	@Autowired
+	Servers servers;
+	
 	@RequestMapping("/if")
 	public String hello(Model model, @RequestParam(defaultValue = "Ryan") String name) throws FileNotFoundException {
 		model.addAttribute("name", name);
+		List<ServerInfo> serverInfos = servers.getServers();
+		model.addAttribute("servers", serverInfos);
 		return "tiles/thymeleaf/if";
 	}
 	
