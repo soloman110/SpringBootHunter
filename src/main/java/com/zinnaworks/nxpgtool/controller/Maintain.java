@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zinnaworks.nxpgtool.config.Servers;
+import com.zinnaworks.nxpgtool.entity.ServerInfo;
 import com.zinnaworks.nxpgtool.util.ExecuteShellUtil;
 import com.zinnaworks.nxpgtool.util.HttpUtils;
 
@@ -37,9 +40,14 @@ public class Maintain {
 	String prdSuyUrl = "https://xpg-nxpg-svc.skb-suy-prd01.mybluemix.net/";
 	String prdSsuUrl = "https://xpg-nxpg-svc.skb-ssu-prd02.mybluemix.net/";
 	
+	@Autowired
+	Servers servers;
+	
 	@RequestMapping("/redis")
 	public String hello(Model model, @RequestParam(defaultValue = "Ryan") String name) throws FileNotFoundException {
 		model.addAttribute("name", name);
+		List<ServerInfo> serverInfos = servers.getServers();
+		model.addAttribute("servers", serverInfos);
 		return "tiles/thymeleaf/redis";
 	}
 	@RequestMapping("/instance")

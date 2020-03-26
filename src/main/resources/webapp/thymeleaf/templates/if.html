@@ -54,14 +54,21 @@
 		var Data = IFJSON;
 		var toSkip = ['IF','subtitle', 'uri']; //url를 build할 때 skip
 		
-		function buildUrl (row) {
+		function buildUrl (e, row) {
 			var apiRoot = $("#server_select").children('option:selected').val();
 			var url = apiRoot + row.uri;
-			for(index in toSkip) {
-				delete row[toSkip[index]];
+			
+			var kvPair = {};
+			var fields = $("#" + row.IF).find(".ifkey");
+			var values = $("#" + row.IF).find(".ifvalue");
+			
+			var params = "";
+			for (i = 0; i < fields.length; i++) {
+				if ($(values[i]).val()) {
+					params = params + "&" + $(fields[i]).text() + "=" + $(values[i]).val();
+				}
 			}
-			var params = $.param(row);
-			return url + "?" + params;
+			return url + params;
 		}
 		
 		$("#ifTable").bootstrapTable("destroy").bootstrapTable({ 
@@ -79,7 +86,7 @@
 						var subtitle = json.subtitle;
 						
 						var elArray = [];
-						elArray.push('<li class="list-group-item">');
+						elArray.push('<li class="list-group-item" id="' + IF + '">');
 						elArray.push('<span class="title h4 divcss5">' + IF + '<small>( ' + subtitle + ' )</small></span>');
 						
 						for(key in json) {
@@ -96,20 +103,20 @@
 						}
 							
 						elArray.pop();
-						elArray.push('<button id="u001" class="fetch btn btn-default  ">조회</button>');
-						elArray.push('<button id="u001" class="check btn btn-default">Field 확인</button>');
+						elArray.push('<button class="fetch btn btn-default  ">조회</button>');
+						elArray.push('<button class="check btn btn-default">Field 확인</button>');
 						elArray.push("</li>");
 						return elArray.join('');
 					},
 					events: {
 						'click .fetch': function (e, value, row, index) {
-							var url = buildUrl(row);
+							var url = buildUrl(e, row);
 							window.open(url, "_blank");
 						 },
 						 'click .check': function (e, value, row, index) {
+
 							var ifname = row.IF;
-							var ifUrl = buildUrl(row);
-							
+							var ifUrl = buildUrl(e, row);
 							$.ajax({
 								type : "post",//필수 
 								url : "/nxpgtool/if/checkfield",
@@ -122,7 +129,7 @@
 									alert(JSON.stringify(data));
 								},
 								error : function(e) {
-									alert("실패했음");
+									alert("실패했음" + JSON.stringify(e));
 								}
 							});
 						 },
