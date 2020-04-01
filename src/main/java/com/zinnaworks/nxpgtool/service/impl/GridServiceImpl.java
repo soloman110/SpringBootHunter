@@ -7,7 +7,13 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,35 +37,49 @@ public class GridServiceImpl implements GridService {
 	private ThreadPoolTaskExecutor gridServiceExecutor;
 
 	@Override
-	public List<String> searchVodPkg() {
+	public List<String> searchVodPkg() throws InterruptedException, ExecutionException, TimeoutException {
 		Cursor<Entry<String, Object>> cursor = redisClient.hscan(NXPGCommon.GRID_CONTENTS);
-		final List<String> menuIds = Collections.synchronizedList(new ArrayList<>());
+		List<Future<String>> futureCol = new ArrayList<Future<String>>();
+		List<String> menuIds = new ArrayList<String>();
 		try {
 			if (cursor != null) {
-				while (cursor.hasNext()) {
-					Entry<String, Object> e = cursor.next();
-					String menuId = e.getKey();
-					final Object obj = e.getValue();
-
-					gridServiceExecutor.execute(new Runnable() {
-						@Override
-						public void run() {
-							if(!Objects.isNull(obj)) {
-								try {
-									Map<String, Object> gridMap = JsonUtil.jsonToObjectHashMap(obj.toString(), String.class, Object.class);
-									if (gridMap != null) {
-										List<Map<String, Object>> list = CastUtil
-												.getObjectToMapList(gridMap.get("contents"));
-										if (containVodOrPackageProduct(list)) {
-											menuIds.add(menuId);
-										}
-									} 
-								} catch (Exception e2) {
-									e2.printStackTrace();
+				cursor.forEachRemaining(new Consumer<Map.Entry<String, Object>>() {
+					@Override
+					public void accept(Entry<String, Object> entry) {
+						String menuId = entry.getKey();
+						final Object obj = entry.getValue();
+						
+						Future<String> future = gridServiceExecutor.submit(new Callable<String>() {
+							@Override
+							public String call() throws Exception {
+								String toReturn = null;
+								
+								if(!Objects.isNull(obj)) {
+									try {
+										Map<String, Object> gridMap = JsonUtil.jsonToObjectHashMap(obj.toString(), String.class, Object.class);
+										if (gridMap != null) {
+											List<Map<String, Object>> list = CastUtil
+													.getObjectToMapList(gridMap.get("contents"));
+											if (containVodOrPackageProduct(list)) {
+												toReturn =  menuId;
+											}
+										} 
+									} catch (Exception e2) {
+										e2.printStackTrace();
+										return null;
+									}
 								}
+								return toReturn;
 							}
-						}
-					});
+						});
+						futureCol.add(future);
+					}
+				});
+				for(Future<String> f : futureCol) {
+					String menuId = f.get(3, TimeUnit.SECONDS);
+					if (menuId != null) {
+						menuIds.add(menuId);
+					}
 				}
 			}
 		} finally {

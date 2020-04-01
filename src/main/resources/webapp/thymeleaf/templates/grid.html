@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 
-<style>
-
-</style>
-
 <div class="row" style="margin-left:20px; margin-top:20px">
 	<div class="col-md-12">
 	<div class="page-header">
     	<h3>패키지상품 또는 VOD +관련상품 콘텐츠를 포함하는 grid Menu</h3>
 	</div>
 	<div id="content" class="">
-		<table class="beans table is-fullwidth is-hoverable table-responsive" id="jqGrid02" 
+		<table class="beans table is-fullwidth is-hoverable table-responsive" id="gridTable" 
   			data-search="true"
 			data-show-fullscreen="true"
 			data-click-to-select="true"
@@ -19,22 +15,14 @@
 			data-pagination="true"
 			data-locale="en-US">
 		</table>
-		
 	</div>
 	</div>
 </div>
 
 <head>
-
 <link href="/webapp/static/bootstrap-table-1.16.0/bootstrap-table.min.css" rel="stylesheet"></link>
-<script src="/webapp/static/bootstrap-table-1.16.0/extensions/export/bootstrap-table-export.min.js"></script>
 <script src="/webapp/static/bootstrap-table-1.16.0/bootstrap-table.min.js"></script>
 <script src="/webapp/static/bootstrap-table-1.16.0/extensions/auto-refresh/bootstrap-table-auto-refresh.min.js"></script>
-
-<script src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table-locale-all.min.js"></script>
-<script src="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/auto-refresh/bootstrap-table-auto-refresh.min.js"></script>
-<link href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css" rel="stylesheet"></link>
-
 </head>
 
 <script th:inline="javascript">
@@ -44,7 +32,7 @@
 		var loading = new KZ_Loading({time: 15000});
 		loading.show();
 		
-        $("#jqGrid02").bootstrapTable("destroy").bootstrapTable({ 
+        $("#gridTable").bootstrapTable("destroy").bootstrapTable({ 
     		url: "/grid/search/vodpkg",
     		cache:true,
     		pageSize : 10,
@@ -61,13 +49,18 @@
     				}
     			},
     			{
-    				field: 'menuId',
     				title: '오프레이션',
     	            align: 'center',
     	            valign: 'middle',
-    				formatter: function (value, rows, index) {
-    		        	var onclick = " onclick=gridBtn(" + value.menuId + ")";
-    		            return "<button class='btn btn-default' style='padding:0 30px; margin:3px' id=" + value.menuId + " onclick=gridBtn('" + value.menuId + "') " +">" +  " 조회</button>"; 
+    				formatter: function (value, rows, index) { // value는 menuId다..
+    		        	var onclick = " onclick=gridBtn(" + value + ")";
+    		            return "<button class='fetch btn btn-default' style='padding:0 30px; margin:3px'>" +  " 조회</button>"; 
+    		        },
+					events: {
+						'click .fetch': function (e, value, row, index) {
+							var url = "https://xpg-nxpg-stg.skb-doj-dev01.mybluemix.net/v5/grid/grid?menu_id=" + row.menuId;		
+							window.open(url, "_blank");
+						}					
     		        }
     			}
     		],
@@ -80,10 +73,5 @@
     	}).bootstrapTable("hideLoading");
 		/*]]>*/
 	});
-	function gridBtn(menuId) {
-		var url = "https://xpg-nxpg-stg.skb-doj-dev01.mybluemix.net/v5/grid/grid?menu_id=" + menuId;		
-		window.open(url, "_blank");
-	}
-	
 	
 </script>
