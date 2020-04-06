@@ -23,6 +23,8 @@ spring:
      enalbed: false
   transaction:
     default-timeout: 1000
+  thymeleaf:
+    mode: LEGACYHTML5
 second:
   redis:
     host: 10.10.223.35:6379,10.10.223.36:6379,10.10.223.37:6379,10.10.223.38:6379,10.10.223.39:6379,10.10.223.40:6379

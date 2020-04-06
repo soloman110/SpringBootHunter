@@ -67,7 +67,7 @@ public class TilesConfig {
 		templateResolver.setPrefix("classpath:webapp/templates/");
 		templateResolver.setCacheable(false);
 		templateResolver.setSuffix(".html");
-		templateResolver.setTemplateMode("HTML5");
+		templateResolver.setTemplateMode("LEGACYHTML5"); 
 		templateResolver.setCharacterEncoding("UTF-8");
 		return templateResolver;
 	}
@@ -80,7 +80,7 @@ public class TilesConfig {
 		templateResolver.setPrefix("/WEB-INF/");
 		templateResolver.setCacheable(false);
 		templateResolver.setSuffix(".html");
-		templateResolver.setTemplateMode("HTML5");
+		templateResolver.setTemplateMode("LEGACYHTML5");
 		templateResolver.setCharacterEncoding("UTF-8");
 		return templateResolver;
 	}
@@ -93,7 +93,7 @@ public class TilesConfig {
 		templateResolver.setPrefix("classpath:webapp/");
 		templateResolver.setCacheable(false);
 		templateResolver.setSuffix(".html");
-		templateResolver.setTemplateMode("HTML5");
+		templateResolver.setTemplateMode("LEGACYHTML5");
 		templateResolver.setCharacterEncoding("UTF-8");
 		return templateResolver;
 	}

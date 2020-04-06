@@ -43,6 +43,12 @@ public class MonitorController {
 	public String index(Model model) throws IOException {
 		return "tiles/thymeleaf/monitor";
 	}
+	
+	@RequestMapping("/guide")
+	public String guide(Model model) throws IOException {
+		model.addAttribute("poc", "BTVWEBV513");
+		return "tiles/thymeleaf/guide513";
+	}
 
 	@RequestMapping("/metrics")
 	@ResponseBody

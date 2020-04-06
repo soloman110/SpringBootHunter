@@ -26,6 +26,9 @@ spring:
       enalbed: false
     transaction:
       default-timeout: 1000
+  thymeleaf:
+    mode: LEGACYHTML5
+ 
 second:
   redis:
     host: localhost
