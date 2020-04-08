@@ -48,6 +48,25 @@
     					].join('')
     				}
     			},
+    			{	//1 게이트웨이 시놉시스 만 존재; 2 VOD + 관련상품 시놉시스 만 존재 3 게이트웨이 및 VOD 둘다 존대
+    				field: 'type',
+    				title: '유형',
+    	            align: 'center',
+    	            valign: 'middle',
+    	            sortable: true,
+    				formatter: function operateFormatter(value, row, index) {
+    					var text = "";
+    					if(value == 1)
+    						text = "게이트웨이 시놉시스";
+    					else if(value == 2) 
+    						text= "VOD + 관련상품 시놉시스";
+    					else 
+    						text = "게이트웨이 시놉시스 <br> VOD + 관련상품 시놉시스"    						
+    					return [
+    						'<span>' + text + '</span>',
+    					].join('')
+    				}
+    			},
     			{
     				title: '오프레이션',
     	            align: 'center',

@@ -39,10 +39,10 @@ public class TaskPoolConfig {
     public ThreadPoolTaskExecutor gridServiceExecutor() {
         ThreadPoolTaskExecutor threadPoolTaskExecutor=new ThreadPoolTaskExecutor();
 
-        threadPoolTaskExecutor.setCorePoolSize(10);
+        threadPoolTaskExecutor.setCorePoolSize(30);
         threadPoolTaskExecutor.setAllowCoreThreadTimeOut(true);// 중요
 
-        threadPoolTaskExecutor.setMaxPoolSize(10);
+        threadPoolTaskExecutor.setMaxPoolSize(30);
         threadPoolTaskExecutor.setQueueCapacity(50);
         threadPoolTaskExecutor.setThreadNamePrefix("grid-service-");
         //配置拒绝策略

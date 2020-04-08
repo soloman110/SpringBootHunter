@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,13 +32,14 @@ public class GridController {
 	
 	@RequestMapping("/search/vodpkg")
 	@ResponseBody
-	public List<Map<String, String>> search() throws Exception {
-		List<String> menuList = gridService.searchVodPkg();
-		List<Map<String, String>> mapList = menuList.parallelStream().map(new Function<String, Map<String, String>>() {
+	public List<Map<String, Object>> search() throws Exception {
+		List<Pair<String, Integer>> menuList = gridService.searchVodPkg();
+		List<Map<String, Object>> mapList = menuList.parallelStream().map(new Function<Pair<String, Integer>, Map<String, Object>>() {
 			@Override
-			public Map<String, String> apply(String menuId) {
-				Map<String, String> map = new HashMap<>();
-				map.put("menuId", menuId);
+			public Map<String, Object> apply(Pair<String, Integer> pair) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("menuId", pair.getLeft());
+				map.put("type", pair.getRight());
 				return map;
 			}
 		}).collect(Collectors.toList());
