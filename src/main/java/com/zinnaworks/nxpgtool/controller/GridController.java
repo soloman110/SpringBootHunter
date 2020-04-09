@@ -1,6 +1,5 @@
 package com.zinnaworks.nxpgtool.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +31,8 @@ public class GridController {
 	
 	@RequestMapping("/search/vodpkg")
 	@ResponseBody
-	public List<Map<String, Object>> search() throws Exception {
-		List<Pair<String, Integer>> menuList = gridService.searchVodPkg();
+	public List<Map<String, Object>> search(@RequestParam(defaultValue = "true") boolean isCache) throws Exception {
+		List<Pair<String, Integer>> menuList = gridService.searchVodPkg(isCache);
 		List<Map<String, Object>> mapList = menuList.parallelStream().map(new Function<Pair<String, Integer>, Map<String, Object>>() {
 			@Override
 			public Map<String, Object> apply(Pair<String, Integer> pair) {

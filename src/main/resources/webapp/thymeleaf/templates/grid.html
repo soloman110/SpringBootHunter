@@ -1,21 +1,37 @@
 <!DOCTYPE html>
 
+<style>
+	#toolbar {
+		position:absolute;
+		float: left;
+		left: 280px;
+	}
+</style>
+
 <div class="row" style="margin-left:20px; margin-top:20px">
 	<div class="col-md-12">
-	<div class="page-header">
-    	<h3>패키지상품 또는 VOD +관련상품 콘텐츠를 포함하는 grid Menu</h3>
-	</div>
-	<div id="content" class="">
-		<table class="beans table is-fullwidth is-hoverable table-responsive" id="gridTable" 
-  			data-search="true"
-			data-show-fullscreen="true"
-			data-click-to-select="true"
-			data-minimum-count-columns="2"
-			data-show-refresh="true"
-			data-pagination="true"
-			data-locale="en-US">
-		</table>
-	</div>
+		<div class="page-header">
+	    	<h3>패키지상품 또는 VOD +관련상품 콘텐츠를 포함하는 grid Menu</h3>
+		</div>
+		<div id="content" class="">
+			<div id="toolbar">
+				<div class='columns columns-right btn-group float-right'>
+				    <button id='updateBtn' class='btn btn-default' style='width:100px;'>
+				    	<i class='fas fa-retweet'></i> 갱신
+				    </button>
+				</div>
+			</div>
+			<table class="beans table is-fullwidth is-hoverable table-responsive" id="gridTable" 
+	  			data-search="true"
+	  			data-toolbar="#toolbar"
+				data-show-fullscreen="true"
+				data-click-to-select="true"
+				data-minimum-count-columns="2"
+				data-show-refresh="true"
+				data-pagination="true"
+				data-locale="en-US">
+			</table>
+		</div>
 	</div>
 </div>
 
@@ -28,13 +44,12 @@
 <script th:inline="javascript">
 	$(document).ready(function() {
 		/*<![CDATA[*/
-
+		
 		var loading = new KZ_Loading({time: 15000});
 		loading.show();
 		
         $("#gridTable").bootstrapTable("destroy").bootstrapTable({ 
     		url: "/grid/search/vodpkg",
-    		cache:true,
     		pageSize : 10,
     		columns: [
     			{
@@ -84,12 +99,19 @@
     			}
     		],
     		onLoadSuccess: function(){
+    			//Bootstrap table의 toolbar에다가 갱신버튼을 추가 
     			loading.hide();
     		},
-    		onLoadError: function(){
+    		onLoadError: function() {
     			loading.hide();
     		}
-    	}).bootstrapTable("hideLoading");
+    	}).bootstrapTable("hideLoading")
+        
+		$("#updateBtn").click(function() {
+	        $("#gridTable").bootstrapTable('refresh', {
+	            query: {isCache: false}
+	        });
+    	});        
 		/*]]>*/
 	});
 	

@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ErrorPage;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -22,6 +23,7 @@ import com.zinnaworks.nxpgtool.common.FileStorageProperties;
 @Controller
 @EnableAsync        // 启用异步任务
 @EnableScheduling   // 启用定时任务
+@EnableCaching
 @SpringBootApplication(scanBasePackageClasses = Application.class)
 public class ApplicationContextConfig {
 

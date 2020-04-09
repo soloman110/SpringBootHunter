@@ -8,6 +8,6 @@ import java.util.concurrent.TimeoutException;
 import org.apache.commons.lang3.tuple.Pair;
 
 public interface GridService {
-	public List<Pair<String, Integer>> searchVodPkg() throws InterruptedException, ExecutionException, TimeoutException;
+	public List<Pair<String, Integer>> searchVodPkg(boolean isCache) throws InterruptedException, ExecutionException, TimeoutException;
 	public Map<String, Object> getGridByMenuId(String menuId);
 }
