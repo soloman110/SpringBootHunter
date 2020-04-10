@@ -12,11 +12,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.zinnaworks.nxpgtool.common.NXPGCommon;
@@ -43,7 +46,9 @@ public class MonitorServiceImpl implements MonitorService{
 	}
 
 	@Override
-	public Map<String, Object> getMetrics(String server) throws IOException {
+	@Cacheable(value = "monitorCache", condition="#isCache == true", key="#root.targetClass + #root.methodName +  #root.args[0]")
+	@CachePut(value = "monitorCache",condition="#isCache == false", key="#root.targetClass + #root.methodName + #root.args[0]")
+	public Map<String, Object> getMetrics(String server, boolean isCache) throws IOException {
 		if(NXPGCommon.isTestMode) {
 			return getMetricsMapTest();
 		}
@@ -58,7 +63,9 @@ public class MonitorServiceImpl implements MonitorService{
 	}
 	
 	@Override
-	public Map<String, Object> getEnv(String server) {
+	@Cacheable(value = "monitorCache", condition="#isCache == true", key="#root.targetClass + #root.methodName +  #root.args[0]")
+	@CachePut(value = "monitorCache",condition="#isCache == false", key="#root.targetClass + #root.methodName + #root.args[0]")
+	public Map<String, Object> getEnv(String server, boolean isCache) {
 		if(NXPGCommon.isTestMode) {
 			return getEnvTest();
 		}
@@ -72,8 +79,11 @@ public class MonitorServiceImpl implements MonitorService{
 		}
 	}
 
+	//monitorCache
 	@Override
-	public Map<String, Object> getHealth(String server) {
+	@Cacheable(value = "monitorCache", condition="#isCache == true", key="#root.targetClass + #root.methodName +  #root.args[0]")
+	@CachePut(value = "monitorCache",condition="#isCache == false", key="#root.targetClass + #root.methodName + #root.args[0]")
+	public Map<String, Object> getHealth(String server, boolean isCache) {
 		if(NXPGCommon.isTestMode) {
 			return getHealthTest();
 		}
@@ -87,13 +97,11 @@ public class MonitorServiceImpl implements MonitorService{
 			return null;
 		}
 	}
-	/**
-	 * 
-	 * 캐시는 지원하지 않음. 성능 테스트 후 캐시사용여부 결정.
-	 * 
-	 */
+	
 	@Override
-	public List<Map<String, Object>> getBeans(String server, boolean isCacheMode) {
+	@Cacheable(value = "monitorCache", condition="#isCache == true", key="#root.targetClass + #root.methodName +  #root.args[0]")
+	@CachePut(value = "monitorCache",condition="#isCache == false", key="#root.targetClass + #root.methodName + #root.args[0]")
+	public List<Map<String, Object>> getBeans(String server, boolean isCache) {
 		String strTemp = "";
 		List<Map<String, Object>> beanList = Collections.emptyList();
 		
@@ -109,11 +117,6 @@ public class MonitorServiceImpl implements MonitorService{
 		}
 		try {
 			strTemp = getActuatorInfo(server, "beans");
-//			if (isCacheMode) {
-//				strTemp = readJsonFile(testFiles.get("beans")).toString();
-//			} else {
-//				strTemp = getActuatorInfo(server, "beans");
-//			} 
 		} catch (Exception e) {
 			logger.error(e.toString());
 		}
@@ -122,7 +125,9 @@ public class MonitorServiceImpl implements MonitorService{
 	}
 
 	@Override
-	public List<Map<String, Object>> threads(String server) {
+	@Cacheable(value = "monitorCache", condition="#isCache == true", key="#root.targetClass + #root.methodName +  #root.args[0]")
+	@CachePut(value = "monitorCache",condition="#isCache == false", key="#root.targetClass + #root.methodName + #root.args[0]")
+	public List<Map<String, Object>> threads(String server, boolean isCache) {
 		if(NXPGCommon.isTestMode) {
 			return threadsTest(server);
 		}
@@ -139,7 +144,9 @@ public class MonitorServiceImpl implements MonitorService{
 	
 	//너무 복잡하다..
 	@Override
-	public List<Map<String, Object>> mappings(String server, boolean isCacheMode) {
+	@Cacheable(value = "monitorCache", condition="#isCache == true", key="#root.targetClass + #root.methodName +  #root.args[0]")
+	@CachePut(value = "monitorCache",condition="#isCache == false", key="#root.targetClass + #root.methodName + #root.args[0]")
+	public List<Map<String, Object>> mappings(String server, boolean isCache) {
 		String strTemp = "";
 		Map<String, Object> mappingsMap = Collections.emptyMap();
 		
@@ -153,9 +160,6 @@ public class MonitorServiceImpl implements MonitorService{
 			}
 		} else {
 			try {
-				if (isCacheMode) {
-				} else {
-				}
 				strTemp = getActuatorInfo(server, "mappings");
 			} catch (Exception e) {
 				logger.error(e.toString());
@@ -176,7 +180,7 @@ public class MonitorServiceImpl implements MonitorService{
 	}
 
 	@Override
-	public String getActuatorByName(String server, String actuatorName) {
+	public String getActuatorByName(String server, String actuatorName, boolean isCache) {
 		String strJson = "";
 		try {
 			String fn = testFiles.get(actuatorName);

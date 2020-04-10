@@ -17,6 +17,7 @@ import java.util.function.Consumer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -38,7 +39,8 @@ public class GridServiceImpl implements GridService {
 	private ThreadPoolTaskExecutor gridServiceExecutor;
 
 	@Override
-	@Cacheable(value = "gridCache", condition="#isCache == true")
+	@Cacheable(value = "gridCache", condition="#isCache == true", key="#root.targetClass")
+	@CachePut(value = "gridCache",condition="#isCache == false", key="#root.targetClass")
 	public List<Pair<String, Integer>> searchVodPkg(boolean isCache) throws InterruptedException, ExecutionException, TimeoutException {
 		
 		Cursor<Entry<String, Object>> cursor = redisClient.hscan(NXPGCommon.GRID_CONTENTS);

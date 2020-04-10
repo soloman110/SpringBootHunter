@@ -70,7 +70,6 @@ small {font-size: .875em;}
 		loading.show();
 		
 		$('#server_select').change(function(){  
-			loading.show();
 			var selectedTab = localStorage.getItem('selectedTab');
 			if (selectedTab) {
 				$('a[data-toggle="tab"][href="' +selectedTab + '"]').tab('show');
@@ -91,7 +90,6 @@ small {font-size: .875em;}
 		    		//https://blog.csdn.net/javahighness/article/details/73929108
     				$("#beansTable").bootstrapTable("destroy").bootstrapTable({ 
     					url: "/monitor/beans?server=" + $("#server_select").children('option:selected').val(),
-						//cache:true,
 						detailFormatter: function (index,row, $element){
 							return createTable(null, row, 1);
 						},		  
@@ -137,7 +135,6 @@ small {font-size: .875em;}
     			"thread": function(jsonData) {
     				$("#threadTable").bootstrapTable("destroy").bootstrapTable({ 
 						url: "/monitor/thread?server=" + $("#server_select").children('option:selected').val(),
-						cache:true,
 						pageSize : 12,
 						detailFormatter: function (index,row, $element){
 							return createTable(null, row, 1);
@@ -191,7 +188,6 @@ small {font-size: .875em;}
     			"mappings": function(jsonData) {
     				$("#mappingsTable").bootstrapTable("destroy").bootstrapTable({ 
 						url: "/monitor/mappings?server=" + $("#server_select").children('option:selected').val(),
-						cache:true,
 						columns: [
 							{
 								field: 'uri',
@@ -244,14 +240,14 @@ small {font-size: .875em;}
     				});
     			}
     	}
-    	function request(activeTab) {
+    	function request(activeTab, isCache=true) {
 			var serverType = $("#server_select").children('option:selected').val();
     		$.ajax({
     			type : "get",
     			url : "/monitor/" + activeTab,
     			async : false,
     			dataType : "json",
-    			data : {server : serverType},
+    			data : {server : serverType, isCache: isCache},
     			success : function(data) {
     				callbacks[activeTab](data);		
     			},
@@ -299,25 +295,50 @@ small {font-size: .875em;}
 		//https://live.bootstrap-table.com/example/welcome.html
     	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     		e.preventDefault();
-    		loading.show();
             var activeTab = $(e.target).attr("aria-controls");
             localStorage.setItem('selectedTab', activeTab);
             loadTab(activeTab);
         });
+		/**
+			갱신버튼 클릭 이벤트 Listener
+			1. detail 및 env는 ajax로 서버요청 후 해당 Dom를 clear한 후 새로 생성
+			2. mappings, thread, beans 같은 경우는 Bootstrap-table Plugin의 refresh함수를 호출 시 isCache를 false로 지정후 갱신 
+		*/
+		$("#updateBtn").click(function() {
+			var isCache=false;
+			var selectedTab = localStorage.getItem('selectedTab');
+			if(selectedTab == "detail" || selectedTab == "env") {
+				loadTab(selectedTab, false);
+			} else {
+				// tabName ==> tableId
+				var tabTableMap = {
+					"mappings":"mappingsTable",
+					"thread":"threadTable",
+					"beans"	: "beansTable"
+				}
+				var tableId = tabTableMap[selectedTab];
+				$("#" + tableId).bootstrapTable('refresh', {
+			          query: {isCache: false}
+			    });
+			}
+		});
 		
-		function loadTab(activeTab) {
+		function loadTab(activeTab, isCache=true) {
+			loading.show();
 			if(activeTab != "detail" && activeTab != "env") {
 				callbacks[activeTab](null);
 			} else {
 	        	setTimeout(function() {
-	        		request(activeTab);
+	        		request(activeTab, isCache);
 	        	}, 200);				
 			}
 		}
 		//Timeout로 안하면, 로딩화면 표시가 안돼네..나중에 확인해야함.		
     	setTimeout(function() {
+    		localStorage.setItem('selectedTab', "detail");
     		request("detail");
     	}, 200);
+		
     	/*]]>*/
     });
 	
@@ -333,6 +354,9 @@ small {font-size: .875em;}
 				<option value="SUY">suy</option>
 				<option value="SSU">ssu</option>
 			</select>
+			<button id='updateBtn' class='btn btn-default' style='width:100px;'>
+				<i class='fas fa-retweet'></i> 갱신
+			</button>
    		</h2>		
 	</div>
 	<div class="col-md-12">

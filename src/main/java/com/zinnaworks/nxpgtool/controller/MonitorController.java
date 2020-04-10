@@ -3,11 +3,9 @@ package com.zinnaworks.nxpgtool.controller;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,8 +14,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,7 +29,6 @@ import com.zinnaworks.nxpgtool.util.CastUtil;
 @RequestMapping("/monitor")
 public class MonitorController {
 
-	private static final Logger logger = LoggerFactory.getLogger(MonitorController.class);
 	ExecutorService executor = Executors.newCachedThreadPool();
 
 	@Autowired
@@ -52,31 +47,30 @@ public class MonitorController {
 
 	@RequestMapping("/metrics")
 	@ResponseBody
-	public Map<String, Object> metrics(@RequestParam("server") String server) throws IOException {
-		Map<String, Object> obj = monitor.getMetrics(server);
+	public Map<String, Object> metrics(@RequestParam("server") String server, @RequestParam(defaultValue="true") boolean isCache) throws IOException {
+		Map<String, Object> obj = monitor.getMetrics(server, isCache);
 		return obj;
 	}
 
 	@RequestMapping("/health")
 	@ResponseBody
-	public Map<String, Object> health(@RequestParam("server") String server) throws FileNotFoundException {
-		Map<String, Object> obj = monitor.getHealth(server);
+	public Map<String, Object> health(@RequestParam("server") String server, @RequestParam(defaultValue="true") boolean isCache) throws FileNotFoundException {
+		Map<String, Object> obj = monitor.getHealth(server, isCache);
 		return obj;
 	}
 
 	@RequestMapping("/env")
 	@ResponseBody
-	public Map<String, Object> env(@RequestParam("server") String server) throws FileNotFoundException {
-		Map<String, Object> obj = monitor.getEnv(server);
+	public Map<String, Object> env(@RequestParam("server") String server, @RequestParam(defaultValue="true") boolean isCache) throws FileNotFoundException {
+		Map<String, Object> obj = monitor.getEnv(server, isCache);
 		return obj;
 	}
 
 	@RequestMapping("/detail")
 	@ResponseBody
-	public Map<String, Object> detail(@RequestParam("server") String server) throws IOException {
-		
-		Future<Map<String, Object>> healthFuture = executor.submit(() -> {return monitor.getHealth(server);});
-		Future<Map<String, Object>> metircsFuture = executor.submit(() -> {return monitor.getMetrics(server);});
+	public Map<String, Object> detail(@RequestParam("server") String server, @RequestParam(defaultValue="true") boolean isCache) throws IOException {
+		Future<Map<String, Object>> healthFuture = executor.submit(() -> {return monitor.getHealth(server, isCache);});
+		Future<Map<String, Object>> metircsFuture = executor.submit(() -> {return monitor.getMetrics(server, isCache);});
 		
 		Map<String, Object> health = Collections.emptyMap();
 		try {
@@ -129,23 +123,22 @@ public class MonitorController {
 	
 	@RequestMapping("/mappings")
 	@ResponseBody
-	public List<Map<String, Object>> mappings(@RequestParam("server") String server) throws FileNotFoundException {
-		boolean isCache = true;
+	public List<Map<String, Object>> mappings(@RequestParam("server") String server, @RequestParam(defaultValue="true") boolean isCache) throws FileNotFoundException {
 		List<Map<String, Object>> list = monitor.mappings(server, isCache);
 		return list;
 	}
 
 	@RequestMapping("/thread")
 	@ResponseBody
-	public List<Map<String, Object>> threads(@RequestParam("server") String server) throws FileNotFoundException {
-		List<Map<String, Object>> beansList = monitor.threads(server);
+	public List<Map<String, Object>> threads(@RequestParam("server") String server, @RequestParam(defaultValue="true") boolean isCache) throws FileNotFoundException {
+		List<Map<String, Object>> beansList = monitor.threads(server, isCache);
 		return beansList;
 	}
 
 	@RequestMapping("/actuator/{item}")
 	@ResponseBody
-	public Object info(@RequestParam("server") String server, @PathVariable("item") String item) throws FileNotFoundException {
-		String json = monitor.getActuatorByName(server, item);
+	public Object info(@RequestParam("server") String server, @PathVariable("item") String item, @RequestParam(defaultValue="true") boolean isCache) throws FileNotFoundException {
+		String json = monitor.getActuatorByName(server, item, isCache);
 		return json;
 	}
 }
