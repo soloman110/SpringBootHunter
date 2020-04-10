@@ -137,7 +137,7 @@ public class GridServiceImpl implements GridService {
 				isGwExist = true;
 				result += 1;
 			}
-			else if("04".equals(synon_typ_cd) && isVodExist) {
+			else if("04".equals(synon_typ_cd) && !isVodExist) {
 				isVodExist = true;
 				result +=2;
 			}

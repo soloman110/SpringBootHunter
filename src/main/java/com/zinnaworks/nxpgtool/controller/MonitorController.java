@@ -3,6 +3,7 @@ package com.zinnaworks.nxpgtool.controller;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,12 +98,13 @@ public class MonitorController {
 		Map<String, Object> metricsFiltered = metrics.entrySet().stream()
 				.filter(x -> !x.getKey().startsWith("gauge"))
 				.collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue()));
-		
+		//주의...Copy를 했다..
+		Map<String, Object> healthCopy = new HashMap<>(health);
 		Map<String, Object> result = new LinkedHashMap<>();
-		Object redis = health.get("redis");
-		health.remove("redis");
+		Object redis = healthCopy.get("redis");
+		healthCopy.remove("redis");
 		
-		result.put("Health", health);
+		result.put("Health", healthCopy);
 		result.put("Redis", redis);
 		result.put("Metrics", metricsFiltered);
 		

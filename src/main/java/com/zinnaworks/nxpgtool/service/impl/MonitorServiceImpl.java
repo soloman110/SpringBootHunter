@@ -89,7 +89,6 @@ public class MonitorServiceImpl implements MonitorService{
 		}
 		try {
 			String strTemp = getActuatorInfo(server, "health");
-			//saveJson(strTemp, testFiles.get("health"));
 			Map<String, Object> map1 = CastUtil.StringToJsonMap(strTemp);
 			return map1;
 		} catch (Exception e) {
