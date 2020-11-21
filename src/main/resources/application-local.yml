@@ -7,7 +7,7 @@ file:
   upload-dir: ./uploads
 
 server:
-  port: 9991
+  port: 9992
  
 spring:
   http:
@@ -15,39 +15,15 @@ spring:
       charset: UTF-8
       enabled: true
       force: true
-  redis:
-    host: localhost
-    port: 6379
-    password: svc25bm
-    setMaxTotal: 100 
-    setMaxIdle: 100
-    setMinIdle: 100
-    second:
-      enalbed: false
-    transaction:
-      default-timeout: 1000
   thymeleaf:
     mode: LEGACYHTML5
- 
-second:
-  redis:
-    host: localhost
-    port: 6379
-    password: svc25bm
-    switching-milisecond: 500
-services:
-  redis:
-    connection:
-      timeout: 1
-    redirection:
-      count: 1
-servers:
-  - type: stg
-    url: https://xpg-nxpg-stg.skb-doj-dev01.mybluemix.net
-  - type: dev
-    url: https://xpg-nxpg-dev.skb-doj-dev01.mybluemix.net
-  - type: ssu
-    url: https://xpg-nxpg-svc.skb-ssu-prd02.mybluemix.net
-  - type: suy
-    url: https://xpg-nxpg-svc.skb-suy-prd01.mybluemix.net
-testMode: true
+    
+myapp:
+  mail:
+    smtp-servers:
+      - 10.1.1.1
+      - 10.1.1.2
+      - 10.1.1.3
+    user: sikongming
+    password: 100200
+    enabled: false
