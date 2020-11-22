@@ -93,7 +93,14 @@ public class ServletContextConfig extends WebMvcConfigurationSupport {
 		StringHttpMessageConverter converter = new StringHttpMessageConverter(Charset.forName("UTF-8"));
 		return converter;
 	}
-
+	/*
+	 * org.springframework.web.filter里面有好多的过滤器。
+	 * 也可以自定义过滤器: 比如查看用户是否登录
+	 * 
+	 * 我们常常在项目中会使用 filters 用于录调用日志、排除有 XSS 威胁的字符、执行权限验证等等。
+	 * Spring Boot 自动添加了 OrderedCharacterEncodingFilter 和 HiddenHttpMethodFilter，并且我们可以自定义 Filter。
+	 * 自定义 Filter参考：http://www.ityouknow.com/springboot/2016/02/03/spring-boot-web.html
+	 */
 	@Bean
 	public Filter characterEncodingFilter() {
 		CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();

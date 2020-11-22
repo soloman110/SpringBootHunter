@@ -15,6 +15,26 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
+/*
+ * 1. 我把Springboot的版本  从1升级到2时候发生了如下的错误：
+ * 		- ThymeleafTilesConfigurer ttc = new ThymeleafTilesConfigurer();
+ * 	  		ttc.setDefinitions报错
+ * 		- final SpringTemplateEngine engine = new SpringTemplateEngine();
+			engine.setTemplateResolver(templateResolver());报错原因是 参数从SpringResourceTemplateResolver变为了ITemplateResolver
+		- SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
+ * 			templateResolver的所有方法都报错
+ * 
+ *  2. 解决办法 ：
+ *  	- 在google和百度上一顿乱搜索，试来试去都不行
+ *  	- 找官方文档，没有
+ *  	- tiles和Thymeleaf单独对Springboot的整合有看考资料，但是一起整合的资料没有
+ *  	- todolist：
+ *  		-- 打算看看内部原理？
+ *  		-- 确认tiles和springboot的版本
+ *  		-- ThymeleafTilesConfigurer是什么东西，查看文档
+ *  		-- SpringTemplateEngine， ViewResolver， SpringResourceTemplateResolver的设计原理
+ * */
+
 @Configuration
 public class TilesConfig {
 	//利用ThymeleafTilesConfigurer 设置了tiles的配置文件tiles.xml
